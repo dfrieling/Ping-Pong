@@ -2,7 +2,7 @@ var
 	chalk = require('chalk'),
 	debounce = require('debounce'),
 	app = require('../app'),
-	elo = require('./eloComparator')(),
+	trueskill.= require('./trueskill.omparator')(),
 	settings = app.get('settings'),
 	Feeler = require('./feelerController'),
 	Game = require('../models/Game'),
@@ -74,7 +74,8 @@ function gameController() {
 		io.sockets.emit('stats.mostFrequentPlayer', player);
 	});
 
-	elo.on('tip.playerWin', function (player) {
+/* disabled for 1st version of 4 player mode
+    trueskill.on('tip.playerWin', function (player) {
 
 		var
 			pronoun = 'them',
@@ -91,7 +92,7 @@ function gameController() {
 			message: 'A win for <span class="player-' + player.position + '">' + player.name + '</span> takes ' + pronoun + ' to rank ' + player.winningLeaderboardRank
 		});
 
-	});
+	});*/
 
 }
 
@@ -147,7 +148,7 @@ gameController.prototype.addPlayer = function(playerID, custom) {
 
         if(players.length > settings.maxPlayers) {
             // maxPlayers+1 player joined, prompting the game to be reset
-            console.log(chalk.yellow('A third player joined, resetting the game'));
+            console.log(chalk.yellow('too many players added, resetting the game'));
             return game.end(false);
         }
         
@@ -160,7 +161,7 @@ gameController.prototype.addPlayer = function(playerID, custom) {
         
         players.push(player);
         position = players.indexOf(player);
-        elo.addPlayer(player, position);
+        trueskill.addPlayer(player, position);
         
         if(players.length === settings.minPlayers) {
           console.log("game ready!\n");
@@ -204,7 +205,7 @@ gameController.prototype.reset = function () {
 	this.inProgress = false;
 	inProgress = false;
 	this.gameHistory = [];
-	elo.reset();
+	trueskill.reset();
 	this.updateStatus();
 };
 
@@ -228,9 +229,9 @@ gameController.prototype.end = function (complete) {
 
 
 	if (winningPlayer - 1 === 0) {
-		updatedRanks = [elo.players[0].winningLeaderboardRank, elo.players[1].losingLeaderboardRank];
+		updatedRanks = [trueskill.players[0].winningLeaderboardRank, trueskill.players[1].losingLeaderboardRank];
 	} else {
-		updatedRanks = [elo.players[0].losingLeaderboardRank, elo.players[1].winningLeaderboardRank];
+		updatedRanks = [trueskill.players[0].losingLeaderboardRank, trueskill.players[1].winningLeaderboardRank];
 	}
 
 	io.sockets.emit('game.message', {
@@ -262,9 +263,9 @@ gameController.prototype.end = function (complete) {
 	players.forEach(function (player, i) {
 
 		if (i === winningPlayer - 1) {
-			player.set('elo', elo.players[i].winningRank);
+			player.set('trueskill., trueskill.players[i].winningRank);
 		} else {
-			player.set('elo', elo.players[i].losingRank);
+			player.set('trueskill., trueskill.players[i].losingRank);
 		}
 
 		// Increment play count
@@ -305,7 +306,7 @@ gameController.prototype.ready = function () {
 	});
 
 	leaderboard.get().then(function (leaderboard) {
-		elo.setLeaderboard(leaderboard);
+		trueskill.setLeaderboard(leaderboard);
 	});
 
 	// Find the last game between the players
