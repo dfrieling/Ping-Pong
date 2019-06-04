@@ -1,13 +1,12 @@
 
 from trueskill import Rating, rate, quality
 import sqlalchemy as sqla
-import string
 
 #config
 db = 'pingpong'
-host = '192.168.2.102'
-user = 'root'
-password = 'secret'
+host = ''
+user = ''
+password = ''
 port = '3306'
 
 #exemplary calls:
@@ -51,13 +50,11 @@ def submitMatchResult(team1,team2,winningTeam):
         matchResult=[0,1]
     else:
         matchResult=[1,0]
-
     t1_updated, t2_updated = rate([t1_ratings, t2_ratings], ranks=matchResult)
 
     #write back to db
     setTeamRatings(t1, t1_updated)
     setTeamRatings(t2, t2_updated)
-
     return
 
 def exe_my_sql_query(query, host = host, db = db,port=port):
@@ -78,7 +75,6 @@ def matchQuality(team1,team2):
     t2_ratings = getTeamRatings(t2)
 
     q = quality([t1_ratings, t2_ratings])
-
     return round(q,4)
 
 #exemplary call:
