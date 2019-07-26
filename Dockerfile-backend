@@ -1,0 +1,15 @@
+FROM node
+
+RUN mkdir /usr/src/app
+RUN chmod -R 777 /usr/src/app
+
+WORKDIR /usr/src/app
+
+COPY . /usr/src/app
+
+RUN npm install -g nodemon knex
+RUN npm install
+RUN apt-get update \
+  && apt-get install netcat net-tools
+
+CMD ["nodemon", "server"]
