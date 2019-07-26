@@ -10,7 +10,7 @@
     "npm": ">= 1.0.0"
   },
   "dependencies": {
-    "ampersand-state": "^4.3.9",
+    "ampersand-state": "^4.8.2",
     "async": "^0.9.0",
     "bluebird": "^2.2.2",
     "bookshelf": "^0.7.7",
@@ -24,14 +24,14 @@
     "knex": "^0.6.23",
     "moment": "2.6.0",
     "mysql": "^2.2.0",
+    "python-shell": "^0.4.0",
     "react": "^0.11.1",
     "serve-static": "^1.5.0",
-    "socket.io": "0.9.16",
+    "socket.io": "^0.9.19",
     "sparknode": "^0.4.9",
     "through2": "^0.6.1",
     "uglifyify": "^2.5.0",
-    "underscore": "1.6.0",
-	"python-shell": "^0.4.0"
+    "underscore": "1.6.0"
   },
   "devDependencies": {
     "async": "^0.9.0",
