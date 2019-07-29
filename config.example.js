@@ -7,11 +7,11 @@ module.exports = {
         database: {
             client: 'mysql',
             connection: {
-                host: 'localhost',
+                host: 'db',
                 port: 3306,
                 user: 'root',
-                password: 'root',
-                database: 'ballgame',
+                password: 'example',
+                database: 'pingpong',
             },
             migrations: {
                 directory: __dirname + '/migrations',
@@ -59,6 +59,10 @@ module.exports = {
         cardReader: {
             pingInterval: 3000,
             pingThreshold: 250
+        },
+        tts: {
+            key: '',
+            language: 'en-us'
         }
     }
 };
