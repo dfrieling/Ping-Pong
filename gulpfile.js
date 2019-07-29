@@ -33,12 +33,6 @@ paths.versions = './versions';
 
 
 
-gulp.task('default', ['all'], function() {
-    var watcher = gulp.watch(paths.css + '/**/*.less', ['css']);
-});
-
-
-
 gulp.task('main.js', function() {
 
     var bundle, watch;
@@ -93,13 +87,16 @@ function cleanJS(cb) {
 }
 
 
+gulp.task('css:clean', function(cb) {
+    return del([path.join(paths.build, '*.css')], cb);
+});
 
-gulp.task('css', ['css:clean'], function() {
-    
+
+gulp.task('css-create', function() {
     var autoprefixerConfig = {
         cascade: false
     };
-    
+
     return gulp.src(paths.css + '/base.less')
         .pipe(less())
         .pipe(autoprefixer(['last 2 versions', '> 1%'], autoprefixerConfig))
@@ -112,13 +109,7 @@ gulp.task('css', ['css:clean'], function() {
 
 });
 
-
-
-gulp.task('css:clean', function(cb) {
-    return del([path.join(paths.build, '*.css')], cb);
-});
-
-
+gulp.task('css', gulp.series('css:clean','css-create'));
 
 gulp.task('sounds', function(cb) {
 
@@ -127,7 +118,7 @@ gulp.task('sounds', function(cb) {
         scoreRange = [0, 40],
         announcements = [],
         downloads = [];
-    
+
     announcements = [
         function(player) {
             return player + ' to serve';
@@ -139,9 +130,9 @@ gulp.task('sounds', function(cb) {
             return player + ' won the game!';
         }
     ];
-    
+
     async.parallel([
-    
+
         function(cb) {
             Player.fetchAll().then(function(players) {
 		players2 = [];
@@ -157,7 +148,7 @@ gulp.task('sounds', function(cb) {
 	        }, cb);
             });
         },
-        
+
         function(cb) {
             var
                 i = 0,
@@ -176,16 +167,16 @@ gulp.task('sounds', function(cb) {
                 });
             }, cb);
         }
-    
+
     ]);
-        
+
     function fetchAnnouncements(player, cb) {
         async.each(announcements, function(announcement, cb) {
             announcement = announcement(player);
             getTTS(announcement, 'en-US', cb);
         }, cb);
     }
-    
+
 });
 
 
@@ -218,4 +209,10 @@ function getTTS(phrase, language, cb) {
 
 }
 
-gulp.task('all', ['css', 'main.js']);
+gulp.task('watch', function() {
+    var watcher = gulp.watch(paths.css + '/**/*.less', ['css']);
+});
+
+gulp.task('default', gulp.series(gulp.parallel('main.js','css'/*,'sounds'*/), 'watch'));
+
+
