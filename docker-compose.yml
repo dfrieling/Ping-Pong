@@ -39,9 +39,11 @@ services:
         build:
           dockerfile: Dockerfile-migrations
           context: .
+        environment:
+          NODE_ENV: ${NODE_ENV}
         volumes:
           - .:/usr/src/app/
-        command: knex migrate:latest --env ${NODE_ENV} migrate
+        command: bash -c "node create_database.js && knex migrate:latest --env ${NODE_ENV} migrate"
         depends_on:
           - db
 
