@@ -99,7 +99,7 @@ function updateSounds(cb) {
                 };
 
             async.whilst(incomplete, function(cb) {
-                getTTS(i, 'en-US', function(res) {
+                getTTS(i, function(res) {
                     if(res.writable) {
                         gutil.log("pushing tts of " + i + " to download queue");
                         downloads.push(res);
@@ -115,17 +115,14 @@ function updateSounds(cb) {
     function fetchAnnouncements(player, cb) {
         async.each(announcements, function(announcement, cb) {
             announcement = announcement(player);
-            getTTS(announcement, 'en-US', cb);
+            getTTS(announcement, cb);
         }, cb);
     }
 }
 
-function getTTS(phrase, language, cb) {
-
-    language = language || 'en-gb';
-
+function getTTS(phrase, cb) {
     var
-        requestURL = 'http://api.voicerss.org/?key=9b6c5034dfc14589807fa9969d7ecea4&hl=' + language + '&f=16khz_16bit_stereo&c=wav&src=' + phrase,
+	requestURL = 'http://api.voicerss.org/?key=' + config.tts.key + '&hl=' + config.tts.language + '&f=16khz_16bit_stereo&c=wav&src=' + phrase,
         fileName = slug(phrase).toLowerCase() + '.wav',
         filePath = path.join('./ui/public/sounds/', fileName),
         res = true;
