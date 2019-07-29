@@ -11,6 +11,8 @@ services:
             MYSQL_ROOT_PASSWORD: example
         volumes:
           - ./mysql:/var/lib/mysql
+        ports:
+          - 3316:3306
 
     adminer:
         image: adminer
@@ -42,3 +44,11 @@ services:
         command: knex migrate:latest --env ${NODE_ENV} migrate
         depends_on:
           - db
+
+    gulp:
+        build:
+            dockerfile: Dockerfile-gulp
+            context: .
+        volumes:
+            - .:/usr/src/app/
+        command: gulp
