@@ -8,3 +8,4 @@ versions/
 config.js
 trueSkill.py.plista
 trueSkill/trueSkill.py
+mysql/

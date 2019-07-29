@@ -1,0 +1,9 @@
+.DS_Store
+.idea/
+node_modules/
+ui/public/build/
+ui/public/sounds/
+ui/public/img/
+versions/
+trueSkill/trueSkill.py
+mysql/
