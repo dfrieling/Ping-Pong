@@ -21,13 +21,10 @@ paths.js = paths.public + '/js';
 paths.build = paths.public + '/build';
 paths.versions = './versions';
 
-gulp.task('main.js', function() {
+gulp.task('main.js', function(done) {
+    const bundle = browserify({ cache: {}, packageCache: {}, fullPaths: true, debug: true });
+    const watch = watchify(bundle);
 
-    var bundle, watch;
-    
-    bundle = browserify({ cache: {}, packageCache: {}, fullPaths: true, debug: true });
-    watch = watchify(bundle);
-    
     bundle.transform({ global: true }, 'uglifyify');
     
     // Add  third party libs. We don't want Browserify to parse them because they
@@ -35,16 +32,16 @@ gulp.task('main.js', function() {
     bundle.add(paths.js + '/third_party/typekit.js', { noparse: true });
     
     // Add the main.js file
-	gutil.log("adding to bundle: "+paths.js + '/main.js');
+	gutil.log("adding to bundle: " + paths.js + '/main.js');
     bundle.add(paths.js + '/main.js');
 
     bundle.transform('reactify');
 
     watch.on('update', rebundle);
-        
+
     function rebundle() {
 		gutil.log("rebundling...");
-        cleanJS(function() {
+        //cleanJS(function() {
 			gutil.log("after deleting, now watching for changes..");
             return watch.bundle()
                 .on('error', function(e) {
@@ -60,12 +57,30 @@ gulp.task('main.js', function() {
                 .pipe(rev.manifest())
                 .pipe(rename('js.json'))
                 .pipe(gulp.dest(paths.versions));
-        });
+       // });
     }
 
-    
     return rebundle();
-    
+});
+
+gulp.task('browserify', function() {
+
+    let bundler = browserify({
+        cache: {}, packageCache: {}, fullPaths: true, debug: true
+    });
+
+    let bundle = function() {
+        return bundler
+            .bundle()
+            .on('error', function () {})
+            .pipe(source('main.js'))
+            .pipe(gulp.dest(paths.versions));
+    };
+
+    bundler = watchify(bundler);
+    bundler.on('update', bundle);
+
+    return bundle();
 });
 
 function cleanJS(cb) {
@@ -97,9 +112,7 @@ gulp.task('css:clean', function(cb) {
 gulp.task('css', gulp.series('css:clean', 'css:create'));
 
 gulp.task('watch', function() {
-    var watcher = gulp.watch(paths.css + '/**/*.less', ['css']);
+    gulp.watch(paths.css + '/**/*.less', gulp.series('css'));
 });
 
-gulp.task('default', gulp.series(gulp.parallel('css', 'main.js'), 'watch'), function() {
-    var watcher = gulp.watch(paths.css + '/**/*.less', ['css']);
-});
+gulp.task('default', gulp.series(gulp.parallel('css', 'main.js'), 'watch'));
