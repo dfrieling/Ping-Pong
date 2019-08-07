@@ -7,7 +7,7 @@
 
 var
     React = require('react'),
-    ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup'),
+    ReactCSSTransitionGroup = require('preact-css-transition-group'),
     config = window.config,
     node = require('../js/node'),
     StatusComponent = require('./StatusComponent'),
@@ -15,10 +15,10 @@ var
 
 
     
-var StatsComponent = module.exports = React.createClass({
+class StatsComponent extends React.Component {
 
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             fullView: true,
             playersFirstGame: undefined,
@@ -31,11 +31,11 @@ var StatsComponent = module.exports = React.createClass({
             totalCompanyGames: undefined,
             mostFrequentPlayer: undefined
         };
-    },
+    }
 
 
 
-    componentDidMount: function() {
+    componentDidMount() {
 
         var _this = this;
 
@@ -71,46 +71,46 @@ var StatsComponent = module.exports = React.createClass({
         node.socket.on('game.end', _this.end);
         node.socket.on('game.reset', _this.reset);
         
-    },
+    }
     
     
     
-    end: function(data) {
+    end(data) {
         this.setState({ winner: data.winner });
         setTimeout(this.showFullView, config.winningViewDuration);
-    },
+    }
     
     
     
-    showFullView: function() {
+    showFullView() {
         this.setState({ fullView: true });
-    },
+    }
     
     
     
-    showCompactView: function() {
+    showCompactView() {
         this.setState({ fullView: false });
-    },
+    }
     
     
     
-    lastGameBetweenPlayers: function(lastGame) {
+    lastGameBetweenPlayers(lastGame) {
         this.setState({
             lastGame: lastGame
         });
-    },
+    }
     
     
     
-    headToHead: function(players) {
+    headToHead(players) {
         this.setState({
             headToHead: players
         });
-    },
+    }
     
     
     
-    reset: function() {
+    reset() {
         this.setState({
             fullView: true,
             lastGame: undefined,
@@ -118,11 +118,11 @@ var StatsComponent = module.exports = React.createClass({
             headToHead: undefined,
             winner: undefined
         });
-    },
+    }
     
     
     
-    render: function() {
+    render() {
 
         var
             classes = 'stats_container clearfix',
@@ -354,4 +354,4 @@ var StatsComponent = module.exports = React.createClass({
     
 
     
-});
+}

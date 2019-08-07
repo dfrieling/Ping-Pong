@@ -3,20 +3,17 @@
  */
 'use strict';
 
-
+import React from 'react';
 
 var
-    React = require('react'),
-    ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup'),
+    ReactCSSTransitionGroup = require('preact-css-transition-group'),
     node = require('../js/node');
 
 
     
-var PlayerComponent = module.exports = React.createClass({
+class PlayerComponent extends React.Component {
 
-
-
-    getInitialState: function() {
+    getInitialState() {
         return {
             name: '',
             score: 0,
@@ -25,11 +22,11 @@ var PlayerComponent = module.exports = React.createClass({
             gamePoint: false,
             gamePointVisible: true
         };
-    },
+    }
 
 
 
-    componentDidMount: function() {
+    componentDidMount() {
         
         var
             _this = this;
@@ -75,36 +72,36 @@ var PlayerComponent = module.exports = React.createClass({
             setTimeout(_this.reset, 1500);
         });
 
-    },
+    }
 
 
 
-    join: function(player) {
+    join(player) {
         this.setState({
             name: player.name,
             image: player.image
         });
-    },
+    }
     
     
     
-    score: function(score) {
+    score(score) {
         this.setState({
             score: score
         });
-    },
+    }
     
     
     
-    cancelPoint: function(score) {
+    cancelPoint(score) {
         this.setState({
             score: score
         });
-    },
+    }
     
     
     
-    gamePoint: function(isGamePoint) {
+    gamePoint(isGamePoint) {
         
         var _this = this;
         
@@ -138,11 +135,11 @@ var PlayerComponent = module.exports = React.createClass({
             
         }
         
-    },
+    }
     
     
     
-    win: function() {
+    win() {
         
         this.gamePoint(false);
         
@@ -151,11 +148,11 @@ var PlayerComponent = module.exports = React.createClass({
             serving: false
         });
         
-    },
+    }
     
     
     
-    lose: function() {
+    lose() {
         
         this.gamePoint(false);
         
@@ -164,24 +161,24 @@ var PlayerComponent = module.exports = React.createClass({
             serving: false
         });
         
-    },
+    }
 
 
 
-    reset: function() {
+    reset() {
         this.gamePoint(false);
         this.replaceState(this.getInitialState());
-    },
+    }
     
-    getPlayerOrder: function(a, b, _this) {
+    getPlayerOrder(a, b, _this) {
         return (!( typeof _this.props.server !== 'undefined' && typeof _this.props.nextServer !== 'undefined') ||
         ( typeof _this.props.server !== 'undefined' && typeof _this.props.nextServer !== 'undefined'
             && _this.props.players[_this.props.nextServer].name != a.name && _this.props.players[_this.props.server].name
             != a.name
         )) ? -1 : 1;
-    },
+    }
     
-    render: function() {
+    render() {
 
         var
 			_this = this,
@@ -280,7 +277,4 @@ var PlayerComponent = module.exports = React.createClass({
         );
 
     }
-    
-
-    
-});
+}

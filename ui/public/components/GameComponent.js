@@ -9,7 +9,6 @@ var
 	slug = require('slug'),
     config = window.config,
     node = require('../js/node'),
-    AdminComponent = require('./AdminComponent'),
     PlayerComponent = require('./PlayerComponent'),
     StatusComponent = require('./StatusComponent'),
     StatusIndicatorComponent = require('./StatusIndicatorComponent'),
@@ -33,12 +32,9 @@ PlayerModel = AmpersandState.extend({
 
 
 
-var GameComponent = module.exports = React.createClass({
+export default class GameComponent extends React.Component {
 
-
-
-
-    getInitialState: function() {
+    getInitialState = () => {
         return {
             server: undefined,
             winner: undefined,
@@ -46,11 +42,11 @@ var GameComponent = module.exports = React.createClass({
             table: undefined,
             cardReader: undefined
         };
-    },
+    }
 
 
 
-    componentDidMount: function() {
+    componentDidMount = () => {
 
         var _this = this;
 
@@ -81,15 +77,15 @@ var GameComponent = module.exports = React.createClass({
             _this.rematch();
         });
 
-    },
+    }
 
 
-    rematch: function() {
+    rematch = () => {
 		//this.queueSound('proceed');
-    },
+    }
     
 
-    switchServer: function(player, nextServer) {
+    switchServer = (player, nextServer) => {
 
         var
             _this = this,
@@ -107,11 +103,11 @@ var GameComponent = module.exports = React.createClass({
 
 		// cut down the delay between "player X to serve" and the score announcement by 500 ms
 		this.queueSound(slug(playerSound.toLowerCase()) + '-to-serve', -500);
-    },
+    }
 
 
 
-    score: function(data) {
+    score = (data) => {
 
         var _this = this;
 
@@ -130,11 +126,11 @@ var GameComponent = module.exports = React.createClass({
             _this.announceScore();
         }, 500);
 
-    },
+    }
 
 
 
-    gamePoint: function(data) {
+    gamePoint = (data) => {
 
         var
             player = data.player,
@@ -150,11 +146,9 @@ var GameComponent = module.exports = React.createClass({
 	        	_this.queueSound('game-point-' + slug(playerSound.toLowerCase()));
 		}
 	}, 600);
-    },
+    }
 
-
-
-    announceScore: function() {
+    announceScore = () => {
 
         var announcement = this.state.score;
 		var _this = this;
@@ -170,11 +164,11 @@ var GameComponent = module.exports = React.createClass({
 			this.queueSound('' + announcement[1]);
         }
 
-    },
+    }
 
 
 
-    end: function(data) {
+    end(data) {
 
         var
             _this = this,
@@ -188,22 +182,22 @@ var GameComponent = module.exports = React.createClass({
 
 //	this.queueSound(data.winner % 2 == 0 ? 'blue-team-dominating' : 'red-team-dominating');
 	this.queueSound(slug(playerSound).toLowerCase() + '-won-the-game');
-    },
+    }
 
-    resetQueue: function() {
+    resetQueue= () => {
 		soundQueue = [];
-	},
+	}
 	
-    queueSound: function(sound, offset, cb) {
+    queueSound(sound, offset, cb) {
         soundQueue.push({
             name: sound,
             offsetNext: typeof offset === 'undefined' ? 0 : offset,
             cb: cb
         });
         this.playQueue();
-    },
+    }
 
-    playQueue: function() {
+    playQueue= () => {
 
         var
             _this = this,
@@ -246,47 +240,47 @@ var GameComponent = module.exports = React.createClass({
 
         play();
 
-    },
+    }
 
-    tableConnected: function() {
+    tableConnected = () => {
         this.setState({
             table: true
         });
-    },
+    }
 
 
 
-    tableDisconnected: function() {
+    tableDisconnected = () => {
         this.setState({
             table: false
         });
-    },
+    }
 
 
 
-    cardReaderConnected: function() {
+    cardReaderConnected = () => {
         this.setState({
             cardReader: true
         });
-    },
+    }
 
 
 
-    cardReaderDisconnected: function() {
+    cardReaderDisconnected = () => {
         this.setState({
             cardReader: false
         });
-    },
+    }
 
 
 
-    tableBatteryLow: function() {
+    tableBatteryLow= () => {
         this.setState({
             table: 'warning'
         });
-    },
+    }
 
-    reset: function() {
+    reset = () => {
 
         setTimeout(function() {
             players = [];
@@ -294,14 +288,13 @@ var GameComponent = module.exports = React.createClass({
 
         this.replaceState(this.getInitialState());
 
-    },
+    }
 
 
 
-    render: function() {
+    render() {
         return (
             <div>
-                <AdminComponent active='0' />
                 <div className='player_container'>
                     <PlayerComponent positionId='0' players={players} server={this.state.server} winner={this.state.winner} nextServer={this.state.nextServer} />
                     <PlayerComponent positionId='1' players={players} server={this.state.server} winner={this.state.winner} nextServer={this.state.nextServer} />
@@ -316,4 +309,4 @@ var GameComponent = module.exports = React.createClass({
         );
     }
 
-});
+}

@@ -7,27 +7,27 @@
 
 var
     React = require('react'),
-    ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup'),
+    ReactCSSTransitionGroup = require('preact-css-transition-group'),
     config = window.config,
     node = require('../js/node');
 
 
 
-var GameComponent = module.exports = React.createClass({
+class GameComponent extends React.Component {
 
 
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             error: false,
             important: false,
             message: ''
         };
-    },
+    }
 
 
 
-    componentDidMount: function() {
+    componentDidMount() {
 
         var _this = this;
         
@@ -47,11 +47,11 @@ var GameComponent = module.exports = React.createClass({
             setTimeout(_this.clearInfo, config.winningViewDuration);
         });
 
-    },
+    }
     
     
     
-    error: function(error, timeout, important) {
+    error(error, timeout, important) {
 
         if(this.state.important && !important) {
             return;
@@ -72,17 +72,17 @@ var GameComponent = module.exports = React.createClass({
             setTimeout(this.resolveError, timeout);
         }
         
-    },
+    }
 
 
 
-    importantError: function(error) {
+    importantError(error) {
         return this.error(error, undefined, true);
-    },
+    }
     
     
     
-    info: function(message) {
+    info(message) {
 
         if(this.state.important) {
             return;
@@ -93,57 +93,57 @@ var GameComponent = module.exports = React.createClass({
             message: message
         });
 
-    },
+    }
     
     
     
-    resolveError: function() {
+    resolveError() {
         if(this.state.error) {
             this.reset();
         }
-    },
+    }
     
     
     
-    cardReadError: function() {
+    cardReadError() {
         this.error('Card reader error', 3000);
-    },
+    }
     
     
     
-    batteryLow: function() {
+    batteryLow() {
         this.importantError('Table batteries low');
-    },
+    }
     
     
     
-    batteryReplenished: function() {
+    batteryReplenished() {
         this.resolveError();
-    },
+    }
     
     
     
-    playerNotFound: function(data) {
+    playerNotFound(data) {
         this.error('Player with ' + data.attr + ' ' + data.value + ' not found', 3000);
-    },
+    }
     
     
     
-    clearInfo: function() {
+    clearInfo() {
         if(!this.state.error) {
             this.reset();
         }
-    },
+    }
     
     
     
-    reset: function() {
+    reset() {
         this.replaceState(this.getInitialState());
-    },
+    }
     
     
     
-    render: function() {
+    render() {
         
         var
             classes = 'info',
@@ -186,4 +186,4 @@ var GameComponent = module.exports = React.createClass({
     
 
     
-});
+}

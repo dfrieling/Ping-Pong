@@ -7,33 +7,33 @@
 
 var
     React = require('react'),
-    classSet = require('react/lib/cx'),
+    classSet = require('classnames'),
     config = window.config;
 
 
 
-var GameComponent = module.exports = React.createClass({
+class GameComponent extends React.Component {
 
 
 
-    getInitialState: function() {
+    getInitialState() {
         return {};
-    },
+    }
 
 
 
-    componentDidMount: function() {
-    },
+    componentDidMount() {
+    }
     
     
     
-    reset: function() {
+    reset() {
         this.replaceState(this.getInitialState());
-    },
+    }
     
     
     
-    render: function() {
+    render() {
         
         var classes = classSet({
             'status-indicator': true,
@@ -45,7 +45,5 @@ var GameComponent = module.exports = React.createClass({
         
         return <div className={classes}></div>;   
     }
-    
 
-    
-});
+}

@@ -12,20 +12,20 @@ var
 
 
 
-var LeaderboardComponent = module.exports = React.createClass({
+class LeaderboardComponent extends React.Component {
 
 
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             players: [],
             active: true
         };
-    },
+    }
 
 
 
-    componentDidMount: function() {
+    componentDidMount() {
         
         var _this = this;
         
@@ -34,39 +34,39 @@ var LeaderboardComponent = module.exports = React.createClass({
         //node.socket.on('leaderboard.show', _this.show);
         //node.socket.on('leaderboard.hide', _this.hide);
 
-    },
+    }
     
     
     
-    show: function() {
+    show() {
         this.getLeaderboard();
         this.setState({
             active: true
         });
-    },
+    }
     
     
     
-    hide: function() {
+    hide() {
         this.setState({
             active: false
         });
-    },
+    }
     
     
     
-    getLeaderboard: function() {
+    getLeaderboard() {
         var _this = this;
         $.get(config.clientUrl + '/leaderboard', function(players) {
             _this.setState({
                 players: players
             });
         });
-    },
+    }
 
 
 
-    render: function() {
+    render() {
 
         var
             players,
@@ -95,7 +95,4 @@ var LeaderboardComponent = module.exports = React.createClass({
         return leaderboard;
 
     }
-
-
-
-});
+}
