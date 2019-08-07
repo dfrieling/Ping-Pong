@@ -54,3 +54,11 @@ services:
         volumes:
             - .:/usr/src/app/
         command: gulp
+
+    webpack:
+        build:
+            dockerfile: Dockerfile-webpack
+            context: .
+        volumes:
+            - .:/usr/src/app/
+        command: webpack
