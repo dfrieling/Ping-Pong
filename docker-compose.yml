@@ -59,6 +59,8 @@ services:
         build:
             dockerfile: Dockerfile-webpack
             context: .
+        environment:
+            NODE_ENV: ${NODE_ENV}
         volumes:
             - .:/usr/src/app/
         command: webpack

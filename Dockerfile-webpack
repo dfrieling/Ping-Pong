@@ -2,6 +2,6 @@ FROM node
 
 WORKDIR /usr/src/app
 
-RUN npm install -g webpack@^4.39.0
+RUN npm install -g webpack webpack-cli
 
 CMD ["wepack"]

@@ -1,6 +1,7 @@
-const path = require('path'),
-    HtmlWebpackPlugin = require('html-webpack-plugin'),
-    MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const isProduction = process.env.NODE_ENV === 'production';
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -10,7 +11,8 @@ module.exports = {
     output: {
         path: path.resolve( __dirname, 'ui/public/build' ),
         filename: '[name].js',
-        sourceMapFilename: 'main.js.map'
+        sourceMapFilename: 'main.js.map',
+        publicPath: path.resolve( __dirname, 'ui/public/' ),
     },
     target: 'node',
     /*resolve: {
@@ -31,26 +33,12 @@ module.exports = {
             {
                 test: /\.less$/,
                 use: [
-                    /*{
-                        loader: 'style-loader', // creates style nodes from JS strings
-                    },*/
-                    {
-                        loader: MiniCssExtractPlugin.loader, // creates style nodes from JS strings
-                    },
-                    {
-                        loader: 'css-loader', // translates CSS into CommonJS
-                    },
-                    {
-                        loader: 'less-loader', // compiles Less to CSS
-                    },
+                    isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+                    'css-loader',
+                    'less-loader'
                 ],
             },
         ],
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-        }),
-        new MiniCssExtractPlugin({
-        }),
-    ]
+    plugins: isProduction ? [new MiniCssExtractPlugin()] : []
 };

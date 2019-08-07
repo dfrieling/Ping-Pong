@@ -21,7 +21,7 @@ app.locals.settings = settings;
 
 _ = require('underscore');
 io = require('socket.io')({
-    transport: ['websocket'],
+    transports: ['websocket']
 });
 moment = require('moment');
 //spark = require('sparknode');
@@ -36,7 +36,8 @@ player = {};
 io = io.listen(config.wsPort);
 console.log(chalk.green('Websocket Server: Listening on port ' + config.wsPort));
 
-/*io.configure(function() {
+/* outdated socket.io usage
+io.configure(function() {
     io.set('log level', 2);
 });*/
 
