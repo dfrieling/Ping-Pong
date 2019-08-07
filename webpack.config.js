@@ -1,11 +1,10 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const isProduction = process.env.NODE_ENV === 'production';
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-        main: './app.js',
+        main: './ui/public/js/main.js',
         style: './ui/public/css/base.less'
     },
     output: {
@@ -14,31 +13,38 @@ module.exports = {
         sourceMapFilename: 'main.js.map',
         publicPath: path.resolve( __dirname, 'ui/public/' ),
     },
-    target: 'node',
-    /*resolve: {
-        extensions: ['', '.js', '.jsx', '.es6'],
-        modulesDirectories: ['node_modules']
-    },*/
-    node: {
-        fs: 'empty',
-        net: 'empty',
-        mssql: 'empty',
-    },
-    externals: {
-        knex: 'commonjs knex'
-    },
     devtool: 'eval-source-map',
+    //watch: true,
     module: {
         rules: [
             {
                 test: /\.less$/,
                 use: [
-                    isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+                    MiniCssExtractPlugin.loader,
                     'css-loader',
                     'less-loader'
                 ],
             },
+            {
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            '@babel/preset-env',
+                            {
+                                plugins: [
+                                    '@babel/plugin-proposal-class-properties'
+                                ]
+                            }
+                        ]
+                    },
+                },
+                exclude: /node_modules/,
+            },
         ],
     },
-    plugins: isProduction ? [new MiniCssExtractPlugin()] : []
+    plugins: [
+        new MiniCssExtractPlugin()
+    ]
 };
