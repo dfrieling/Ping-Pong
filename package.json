@@ -3,7 +3,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "webpack"
+    "build": "webpack --mode development"
   },
   "version": "1.0.0-14",
   "engines": {

@@ -1,6 +1,3 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
 
@@ -15,25 +12,20 @@ var
 
 
     
-class StatsComponent extends React.Component {
+export default class StatsComponent extends React.Component {
 
-
-    getInitialState() {
-        return {
-            fullView: true,
-            playersFirstGame: undefined,
-            lastGame: undefined,
-            winner: undefined,
-            headToHead: undefined,
-            biggestWinningStreak: undefined,
-            mostConsecutiveLosses: undefined,
-            largestWhooping: undefined,
-            totalCompanyGames: undefined,
-            mostFrequentPlayer: undefined
-        };
+    state = {
+        fullView: true,
+        playersFirstGame: undefined,
+        lastGame: undefined,
+        winner: undefined,
+        headToHead: undefined,
+        biggestWinningStreak: undefined,
+        mostConsecutiveLosses: undefined,
+        largestWhooping: undefined,
+        totalCompanyGames: undefined,
+        mostFrequentPlayer: undefined
     }
-
-
 
     componentDidMount() {
 

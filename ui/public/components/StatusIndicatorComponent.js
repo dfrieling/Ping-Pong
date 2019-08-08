@@ -1,6 +1,3 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
 
@@ -12,27 +9,21 @@ var
 
 
 
-class GameComponent extends React.Component {
+export default class StatusIndicatorComponent extends React.Component {
 
-
+    state = this.getInitialState();
 
     getInitialState() {
         return {};
     }
 
-
-
     componentDidMount() {
     }
-    
-    
-    
+
     reset() {
         this.replaceState(this.getInitialState());
     }
-    
-    
-    
+
     render() {
         
         var classes = classSet({

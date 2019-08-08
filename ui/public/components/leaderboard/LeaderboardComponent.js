@@ -1,6 +1,3 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
 
@@ -12,33 +9,23 @@ var
 
 
 
-class LeaderboardComponent extends React.Component {
+export default class LeaderboardComponent extends React.Component {
 
-
-
-    getInitialState() {
-        return {
-            players: [],
-            active: true
-        };
+    state = {
+        players: [],
+        active: true
     }
 
-
-
-    componentDidMount() {
-        
-        var _this = this;
+    componentDidMount = () => {
         
         this.getLeaderboard();
-        
-        //node.socket.on('leaderboard.show', _this.show);
-        //node.socket.on('leaderboard.hide', _this.hide);
 
+        // todo: those lines used to be commented out
+        node.socket.on('leaderboard.show', this.show);
+        node.socket.on('leaderboard.hide', this.hide);
     }
     
-    
-    
-    show() {
+    show = () => {
         this.getLeaderboard();
         this.setState({
             active: true
@@ -47,7 +34,7 @@ class LeaderboardComponent extends React.Component {
     
     
     
-    hide() {
+    hide = () => {
         this.setState({
             active: false
         });
@@ -55,7 +42,7 @@ class LeaderboardComponent extends React.Component {
     
     
     
-    getLeaderboard() {
+    getLeaderboard = () => {
         var _this = this;
         $.get(config.clientUrl + '/leaderboard', function(players) {
             _this.setState({
@@ -66,7 +53,7 @@ class LeaderboardComponent extends React.Component {
 
 
 
-    render() {
+    render = () => {
 
         var
             players,

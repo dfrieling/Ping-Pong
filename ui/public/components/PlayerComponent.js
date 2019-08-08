@@ -1,6 +1,3 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
 import React from 'react';
@@ -11,20 +8,16 @@ var
 
 
     
-class PlayerComponent extends React.Component {
+export default class PlayerComponent extends React.Component {
 
-    getInitialState() {
-        return {
+    state = {
             name: '',
             score: 0,
             image: false,
             win: false,
             gamePoint: false,
             gamePointVisible: true
-        };
     }
-
-
 
     componentDidMount() {
         
@@ -167,7 +160,7 @@ class PlayerComponent extends React.Component {
 
     reset() {
         this.gamePoint(false);
-        this.replaceState(this.getInitialState());
+        this.replaceState(GameComponent.getInitialState());
     }
     
     getPlayerOrder(a, b, _this) {

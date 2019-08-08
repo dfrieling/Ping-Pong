@@ -1,6 +1,3 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
 
@@ -13,9 +10,9 @@ var
 
 
 
-class GameComponent extends React.Component {
+export default class StatusComponent extends React.Component {
 
-
+    state = this.getInitialState();
 
     getInitialState() {
         return {
@@ -138,6 +135,7 @@ class GameComponent extends React.Component {
     
     
     reset() {
+        //todo
         this.replaceState(this.getInitialState());
     }
     

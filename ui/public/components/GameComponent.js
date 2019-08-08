@@ -1,7 +1,9 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
+
+import PlayerComponent from "./PlayerComponent";
+import StatsComponent from "./StatsComponent";
+import StatusIndicatorComponent from "./StatusIndicatorComponent";
+import StatusComponent from "./StatusComponent";
 
 var
     React = require('react'),
@@ -9,10 +11,6 @@ var
 	slug = require('slug'),
     config = window.config,
     node = require('../js/node'),
-    PlayerComponent = require('./PlayerComponent'),
-    StatusComponent = require('./StatusComponent'),
-    StatusIndicatorComponent = require('./StatusIndicatorComponent'),
-    StatsComponent = require('./StatsComponent'),
     soundPath = '/sounds/',
     PlayerModel,
     playerProps,
@@ -23,7 +21,7 @@ var
 // The beginnings of a model for sharing state between components
 playerProps = {
     name: 'string',
-    image: 'string'
+    image: 'string',
 };
 
 PlayerModel = AmpersandState.extend({
@@ -34,8 +32,10 @@ PlayerModel = AmpersandState.extend({
 
 export default class GameComponent extends React.Component {
 
-    getInitialState = () => {
-        return {
+    state = this.getInitialState();
+
+    getInitialState() {
+        return  {
             server: undefined,
             winner: undefined,
             score: [0, 0],
@@ -44,37 +44,33 @@ export default class GameComponent extends React.Component {
         };
     }
 
-
-
     componentDidMount = () => {
 
-        var _this = this;
+        node.socket.on('game.end', this.end);
+        node.socket.on('game.score', this.score);
+        node.socket.on('game.reset', this.reset);
+        node.socket.on('game.gamePoint', this.gamePoint);
 
-        node.socket.on('game.end', _this.end);
-        node.socket.on('game.score', _this.score);
-        node.socket.on('game.reset', _this.reset);
-        node.socket.on('game.gamePoint', _this.gamePoint);
-
-        node.socket.on('game.switchServer', function(data) {
-            _this.switchServer(data.player, data.nextServer);
+        node.socket.on('game.switchServer', (data) => {
+            this.switchServer(data.player, data.nextServer);
         });
 
-        node.socket.on('feelers.disconnect', _this.tableDisconnected);
-        node.socket.on('feelers.connect', _this.tableConnected);
-        node.socket.on('core.batteryLow', _this.tableBatteryLow);
+        node.socket.on('feelers.disconnect', this.tableDisconnected);
+        node.socket.on('feelers.connect', this.tableConnected);
+        node.socket.on('core.batteryLow', this.tableBatteryLow);
 
-        node.socket.on('cardReader.connect', _this.cardReaderConnected);
-        node.socket.on('cardReader.disconnect', _this.cardReaderDisconnected);
+        node.socket.on('cardReader.connect', this.cardReaderConnected);
+        node.socket.on('cardReader.disconnect', this.cardReaderDisconnected);
 
-        node.socket.on('player.join', function(data) {
+        node.socket.on('player.join', (data) => {
             console.log(['player.join', data.player.name]);
             players[data.position] = new PlayerModel();
 			players[data.position].set(data.player);
         });
 
-        node.socket.on('player.rematch', function() {
+        node.socket.on('player.rematch', () => {
 			console.log('received rematch event');	
-            _this.rematch();
+            this.rematch();
         });
 
     }
@@ -86,11 +82,6 @@ export default class GameComponent extends React.Component {
     
 
     switchServer = (player, nextServer) => {
-
-        var
-            _this = this,
-            playerSound = '';
-
         this.setState({
             server: player
         });
@@ -99,7 +90,7 @@ export default class GameComponent extends React.Component {
             nextServer: nextServer
         });
 
-        playerSound = players[player].name;
+        const playerSound = players[player].name;
 
 		// cut down the delay between "player X to serve" and the score announcement by 500 ms
 		this.queueSound(slug(playerSound.toLowerCase()) + '-to-serve', -500);
@@ -274,7 +265,7 @@ export default class GameComponent extends React.Component {
 
 
 
-    tableBatteryLow= () => {
+    tableBatteryLow = () => {
         this.setState({
             table: 'warning'
         });
@@ -289,8 +280,6 @@ export default class GameComponent extends React.Component {
         this.replaceState(this.getInitialState());
 
     }
-
-
 
     render() {
         return (
