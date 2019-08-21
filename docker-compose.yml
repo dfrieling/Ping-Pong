@@ -56,6 +56,7 @@ services:
         command: gulp
 
     webpack:
+        restart: unless-stopped
         build:
             dockerfile: Dockerfile-webpack
             context: .
@@ -64,3 +65,5 @@ services:
         volumes:
             - .:/usr/src/app/
         command: webpack
+        ports:
+            - 9000:9000
