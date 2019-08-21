@@ -1,4 +1,4 @@
-var PythonShell = require('python-shell');
+var {PythonShell} = require('python-shell');
 const TRUESKILL_FILENAME = 'trueSkill/trueSkill.py';
 
 module.exports = function() {
