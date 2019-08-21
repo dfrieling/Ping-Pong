@@ -1,13 +1,16 @@
 'use strict';
 
 import React from 'react';
+import GameComponent from "./GameComponent";
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var
-    ReactCSSTransitionGroup = require('preact-css-transition-group'),
+    //ReactCSSTransitionGroup = require('preact-css-transition-group'),
+
     node = require('../js/node');
 
 
-    
+
 export default class PlayerComponent extends React.Component {
 
     state = {
@@ -21,55 +24,52 @@ export default class PlayerComponent extends React.Component {
 
     componentDidMount() {
         
-        var
-            _this = this;
-
-        this.props.players.map(function(player) {
+        this.props.players.map((player) => {
             player.on('change', function(player) {
-				_this.join(player);
+				this.join(player);
 			});
         });
         
-        node.socket.on('game.score', function(data) {
-            if(data.player % 2 == _this.props.positionId) {
-                _this.score(data.score);
+        node.socket.on('game.score', (data) => {
+            if(data.player % 2 == this.props.positionId) {
+                this.score(data.score);
             }
         });
         
-        node.socket.on('game.gamePoint', function(data) {
-            if(data.player % 2 == _this.props.positionId) {
-                _this.gamePoint();
+        node.socket.on('game.gamePoint', (data) => {
+            if(data.player % 2 == this.props.positionId) {
+                this.gamePoint();
             } else {
-                _this.gamePoint(false);
+                this.gamePoint(false);
             }
         });
         
-        node.socket.on('game.notGamePoint', function() {
-            _this.gamePoint(false);
+        node.socket.on('game.notGamePoint', () => {
+            this.gamePoint(false);
         });
         
-        node.socket.on('game.cancelPoint', function(data) {
-            if(data.player % 2 == _this.props.positionId) {
-                _this.cancelPoint(data.score);
+        node.socket.on('game.cancelPoint', (data) => {
+            if(data.player % 2 == this.props.positionId) {
+                this.cancelPoint(data.score);
             }
         });
 
-        node.socket.on('game.end', function(data) {
-            if(data.winner % 2 == _this.props.positionId) {
-                return _this.win();
+        node.socket.on('game.end', (data) => {
+            if(data.winner % 2 == this.props.positionId) {
+                return this.win();
             }
-            _this.lose();
+            this.lose();
         });
 
-        node.socket.on('game.reset', function() {
-            setTimeout(_this.reset, 1500);
+        node.socket.on('game.reset', () => {
+            setTimeout(this.reset, 1500);
         });
 
     }
 
 
 
-    join(player) {
+    join = (player) => {
         this.setState({
             name: player.name,
             image: player.image
@@ -78,7 +78,7 @@ export default class PlayerComponent extends React.Component {
     
     
     
-    score(score) {
+    score = (score) => {
         this.setState({
             score: score
         });
@@ -86,7 +86,7 @@ export default class PlayerComponent extends React.Component {
     
     
     
-    cancelPoint(score) {
+    cancelPoint = (score) => {
         this.setState({
             score: score
         });
@@ -94,9 +94,7 @@ export default class PlayerComponent extends React.Component {
     
     
     
-    gamePoint(isGamePoint) {
-        
-        var _this = this;
+    gamePoint = (isGamePoint) => {
         
         isGamePoint = typeof isGamePoint === 'undefined' ? true : isGamePoint;
         
@@ -106,11 +104,11 @@ export default class PlayerComponent extends React.Component {
                 gamePoint: true
             });
             
-            if(typeof _this.pulse === 'undefined') {
-                this.pulse = setInterval(function() {
-                    if(_this.props.server % 2 == _this.props.positionId) {
-                        _this.setState({
-                            gamePointVisible: !_this.state.gamePointVisible
+            if(typeof this.pulse === 'undefined') {
+                this.pulse = setInterval(() => {
+                    if(this.props.server % 2 == this.props.positionId) {
+                        this.setState({
+                            gamePointVisible: !this.state.gamePointVisible
                         });
                     }
                 }, 900);
@@ -123,8 +121,8 @@ export default class PlayerComponent extends React.Component {
                 gamePointVisible: true
             });
             
-            clearTimeout(_this.pulse);
-            _this.pulse = undefined;
+            clearTimeout(this.pulse);
+            this.pulse = undefined;
             
         }
         
@@ -132,7 +130,7 @@ export default class PlayerComponent extends React.Component {
     
     
     
-    win() {
+    win = () => {
         
         this.gamePoint(false);
         
@@ -145,7 +143,7 @@ export default class PlayerComponent extends React.Component {
     
     
     
-    lose() {
+    lose = () => {
         
         this.gamePoint(false);
         
@@ -158,15 +156,15 @@ export default class PlayerComponent extends React.Component {
 
 
 
-    reset() {
+    reset = () => {
         this.gamePoint(false);
         this.replaceState(GameComponent.getInitialState());
     }
-    
-    getPlayerOrder(a, b, _this) {
-        return (!( typeof _this.props.server !== 'undefined' && typeof _this.props.nextServer !== 'undefined') ||
-        ( typeof _this.props.server !== 'undefined' && typeof _this.props.nextServer !== 'undefined'
-            && _this.props.players[_this.props.nextServer].name != a.name && _this.props.players[_this.props.server].name
+
+    getPlayerOrder(a, b) {
+        return (!( typeof this.props.server !== 'undefined' && typeof this.props.nextServer !== 'undefined') ||
+        ( typeof this.props.server !== 'undefined' && typeof this.props.nextServer !== 'undefined'
+            && this.props.players[this.props.nextServer].name != a.name && this.props.players[this.props.server].name
             != a.name
         )) ? -1 : 1;
     }
@@ -174,7 +172,6 @@ export default class PlayerComponent extends React.Component {
     render() {
 
         var
-			_this = this,
             playerClasses,
             style = {},
             status,
@@ -188,13 +185,13 @@ export default class PlayerComponent extends React.Component {
             style = {
                 'background-image':
                     this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
-                        .sort(function(a,v) { return _this.getPlayerOrder(a, v, _this); })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
+                        .sort((a,v) => { return this.getPlayerOrder(a, v); })
                         .map(function(v) { return 'url(img/players/' + v.image + ')'; })
                         .join(', '),
                 'background-position':
                     this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
                         .length > 1 ? 'bottom left, bottom right' : ''
             }
         }
@@ -203,13 +200,13 @@ export default class PlayerComponent extends React.Component {
             style = {
                 'background-image':
                     this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
-                        .sort(function(a,v) { return _this.getPlayerOrder(a, v, _this); })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
+                        .sort((a,v) => { return this.getPlayerOrder(a, v); })
                         .map(function(v) { return 'url(img/players/win/' + v.image + ')'; })
                         .join(', '),
                 'background-position':
                     this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
                         .length > 1 ? 'bottom left, bottom right' : ''
             }
 		}
@@ -233,8 +230,8 @@ export default class PlayerComponent extends React.Component {
                 <div className='details'>
                     <div className='score'>{this.state.score}</div>
                     <div className='name'>{(this.props.players.length && this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
-                        .sort(function(a,v) { return _this.getPlayerOrder(a, v, _this); })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
+                        .sort((a,v) => { return this.getPlayerOrder(a, v); })
                         .map(function(v) { return v.name; })
                         .join(' & ')) || 'Add player'}</div>
                 </div>
@@ -253,7 +250,7 @@ export default class PlayerComponent extends React.Component {
         
         if(this.state.win) {
             winner = (
-                <div className='winner'>{this.props.players.filter(function(v,i){return i%2 == _this.props.positionId;}).map(function(v) { return v.name; }).join(' & ')} {this.props.players.length > 2 ? 'win' : 'wins'}</div>
+                <div className='winner'>{this.props.players.filter((v,i) => {return i%2 == this.props.positionId;}).map(function(v) { return v.name; }).join(' & ')} {this.props.players.length > 2 ? 'win' : 'wins'}</div>
             );
         }
 

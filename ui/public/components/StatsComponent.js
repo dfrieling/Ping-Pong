@@ -1,14 +1,15 @@
 'use strict';
 
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
+import StatusComponent from "./StatusComponent";
+import LeaderboardComponent from "./leaderboard/LeaderboardComponent";
 
 var
     React = require('react'),
-    ReactCSSTransitionGroup = require('preact-css-transition-group'),
+    //ReactCSSTransitionGroup = require('preact-css-transition-group'),
     config = window.config,
-    node = require('../js/node'),
-    StatusComponent = require('./StatusComponent'),
-    LeaderboardComponent = require('./leaderboard/LeaderboardComponent');
+    node = require('../js/node');
 
 
     
@@ -27,66 +28,62 @@ export default class StatsComponent extends React.Component {
         mostFrequentPlayer: undefined
     }
 
-    componentDidMount() {
-
-        var _this = this;
-
-        node.socket.on('stats.lastGameBetweenPlayers', function(data) {
-            _this.lastGameBetweenPlayers(data.lastGame);
+    componentDidMount = () => {
+        node.socket.on('stats.lastGameBetweenPlayers', (data) => {
+            this.lastGameBetweenPlayers(data.lastGame);
         });
         
-        node.socket.on('stats.headToHead', function(data) {
-            _this.headToHead(data.headToHead);
+        node.socket.on('stats.headToHead', (data) => {
+            this.headToHead(data.headToHead);
         });
         
-        node.socket.on('stats.biggestWinningStreak', function(streak) {
-            _this.setState({ biggestWinningStreak: streak });
+        node.socket.on('stats.biggestWinningStreak', (streak) => {
+            this.setState({ biggestWinningStreak: streak });
         });
         
-        node.socket.on('stats.mostConsecutiveLosses', function(streak) {
-            _this.setState({ mostConsecutiveLosses: streak });
+        node.socket.on('stats.mostConsecutiveLosses', (streak) => {
+            this.setState({ mostConsecutiveLosses: streak });
         });
         
-        node.socket.on('stats.largestWhooping', function(whooping) {
-            _this.setState({ largestWhooping: whooping });
+        node.socket.on('stats.largestWhooping', (whooping) => {
+            this.setState({ largestWhooping: whooping });
         });
         
-        node.socket.on('stats.totalCompanyGames', function(count) {
-            _this.setState({ totalCompanyGames: count });
+        node.socket.on('stats.totalCompanyGames', (count) => {
+            this.setState({ totalCompanyGames: count });
         });
         
-        node.socket.on('stats.mostFrequentPlayer', function(player) {
-            _this.setState({ mostFrequentPlayer: player });
+        node.socket.on('stats.mostFrequentPlayer', (player) => {
+            this.setState({ mostFrequentPlayer: player });
         });
         
-        node.socket.on('leaderboard.hide', _this.showCompactView);
-        node.socket.on('game.end', _this.end);
-        node.socket.on('game.reset', _this.reset);
-        
+        node.socket.on('leaderboard.hide', this.showCompactView);
+        node.socket.on('game.end', this.end);
+        node.socket.on('game.reset', this.reset);
     }
     
     
     
-    end(data) {
+    end = (data) => {
         this.setState({ winner: data.winner });
         setTimeout(this.showFullView, config.winningViewDuration);
     }
     
     
     
-    showFullView() {
+    showFullView = () => {
         this.setState({ fullView: true });
     }
     
     
     
-    showCompactView() {
+    showCompactView = () => {
         this.setState({ fullView: false });
     }
     
     
     
-    lastGameBetweenPlayers(lastGame) {
+    lastGameBetweenPlayers = (lastGame) => {
         this.setState({
             lastGame: lastGame
         });
@@ -94,7 +91,7 @@ export default class StatsComponent extends React.Component {
     
     
     
-    headToHead(players) {
+    headToHead = (players) => {
         this.setState({
             headToHead: players
         });
@@ -102,7 +99,7 @@ export default class StatsComponent extends React.Component {
     
     
     
-    reset() {
+    reset = () => {
         this.setState({
             fullView: true,
             lastGame: undefined,

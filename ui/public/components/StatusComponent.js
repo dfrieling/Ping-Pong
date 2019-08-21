@@ -1,10 +1,10 @@
 'use strict';
 
-
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var
     React = require('react'),
-    ReactCSSTransitionGroup = require('preact-css-transition-group'),
+    //ReactCSSTransitionGroup = require('preact-css-transition-group'),
     config = window.config,
     node = require('../js/node');
 
@@ -26,29 +26,27 @@ export default class StatusComponent extends React.Component {
 
     componentDidMount() {
 
-        var _this = this;
+        node.socket.on('core.batteryLow', this.batteryLow);
+        node.socket.on('core.online', this.batteryReplenished);
+        node.socket.on('game.cardReadError', this.cardReadError);
         
-        node.socket.on('core.batteryLow', _this.batteryLow);
-        node.socket.on('core.online', _this.batteryReplenished);
-        node.socket.on('game.cardReadError', _this.cardReadError);
-        
-        node.socket.on('game.message', function(data) {
-            _this.info(data.message);
+        node.socket.on('game.message', (data) => {
+            this.info(data.message);
         });
         
-        node.socket.on('game.playerNotFound', function(data) {
-            _this.playerNotFound(data);
+        node.socket.on('game.playerNotFound', (data) => {
+            this.playerNotFound(data);
         });
 
-        node.socket.on('game.end', function() {
-            setTimeout(_this.clearInfo, config.winningViewDuration);
+        node.socket.on('game.end', () => {
+            setTimeout(this.clearInfo, config.winningViewDuration);
         });
 
     }
     
     
     
-    error(error, timeout, important) {
+    error = (error, timeout, important) => {
 
         if(this.state.important && !important) {
             return;
@@ -79,7 +77,7 @@ export default class StatusComponent extends React.Component {
     
     
     
-    info(message) {
+    info = (message) => {
 
         if(this.state.important) {
             return;

@@ -16,7 +16,7 @@ export default class LeaderboardComponent extends React.Component {
         active: true
     }
 
-    componentDidMount = () => {
+    componentDidMount() {
         
         this.getLeaderboard();
 
@@ -43,9 +43,8 @@ export default class LeaderboardComponent extends React.Component {
     
     
     getLeaderboard = () => {
-        var _this = this;
-        $.get(config.clientUrl + '/leaderboard', function(players) {
-            _this.setState({
+        $.get(config.clientUrl + '/leaderboard', (players) => {
+            this.setState({
                 players: players
             });
         });
@@ -53,7 +52,7 @@ export default class LeaderboardComponent extends React.Component {
 
 
 
-    render = () => {
+    render() {
 
         var
             players,
@@ -77,6 +76,10 @@ export default class LeaderboardComponent extends React.Component {
                     </ol>
                 </div>
             );
+        } else {
+            leaderboard = (
+                <div></div>
+            )
         }
 
         return leaderboard;
