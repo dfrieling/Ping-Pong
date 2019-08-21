@@ -7,7 +7,6 @@ import LeaderboardComponent from "./leaderboard/LeaderboardComponent";
 
 var
     React = require('react'),
-    //ReactCSSTransitionGroup = require('preact-css-transition-group'),
     config = window.config,
     node = require('../js/node');
 

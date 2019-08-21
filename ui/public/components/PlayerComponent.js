@@ -4,10 +4,7 @@ import React from 'react';
 import GameComponent from "./GameComponent";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-var
-    //ReactCSSTransitionGroup = require('preact-css-transition-group'),
-
-    node = require('../js/node');
+var node = require('../js/node');
 
 
 

@@ -4,7 +4,6 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var
     React = require('react'),
-    //ReactCSSTransitionGroup = require('preact-css-transition-group'),
     config = window.config,
     node = require('../js/node');
 
