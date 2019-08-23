@@ -1,6 +1,6 @@
 const {PythonShell} = require('python-shell');
 
-const TRUESKILL_FILENAME = 'trueSkill/trueSkill.py';
+const TRUESKILL_FILENAME = 'pyTrueSkill/pyTrueSkill.py';
 
 module.exports = function() {
     return this instanceof TrueskillController
