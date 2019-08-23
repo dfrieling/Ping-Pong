@@ -14,7 +14,7 @@ module.exports = {
         publicPath: path.resolve( __dirname, 'ui/public/' ),
     },
     devtool: 'eval-source-map',
-    //watch: true,
+    watch: true,
     module: {
         rules: [
             {
