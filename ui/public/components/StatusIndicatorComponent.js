@@ -20,8 +20,8 @@ export default class StatusIndicatorComponent extends React.Component {
     componentDidMount() {
     }
 
-    reset() {
-        this.replaceState(this.getInitialState());
+    reset = () => {
+        this.setState(this.getInitialState());
     }
 
     render() {

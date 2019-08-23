@@ -123,7 +123,7 @@ export default class StatusComponent extends React.Component {
     
     
     
-    clearInfo() {
+    clearInfo = () => {
         if(!this.state.error) {
             this.reset();
         }
@@ -131,9 +131,9 @@ export default class StatusComponent extends React.Component {
     
     
     
-    reset() {
+    reset = () => {
         //todo
-        this.replaceState(this.getInitialState());
+        this.setState(this.getInitialState());
     }
     
     

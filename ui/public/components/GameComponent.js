@@ -256,14 +256,13 @@ export default class GameComponent extends React.Component {
         });
     }
 
-    reset() {
+    reset = () => {
+        setTimeout(() => {
+                players = [];
+            }, 1500
+        );
 
-        setTimeout(function () {
-            players = [];
-        }, 1500);
-
-        this.replaceState(this.getInitialState());
-
+        this.setState(this.getInitialState());
     }
 
     render() {

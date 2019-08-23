@@ -10,13 +10,17 @@ var node = require('../js/node');
 
 export default class PlayerComponent extends React.Component {
 
-    state = {
+    state = this.getInitialState();
+
+    getInitialState() {
+        return {
             name: '',
             score: 0,
             image: false,
             win: false,
             gamePoint: false,
             gamePointVisible: true
+        };
     }
 
     componentDidMount() {
@@ -151,11 +155,9 @@ export default class PlayerComponent extends React.Component {
         
     }
 
-
-
     reset = () => {
         this.gamePoint(false);
-        this.replaceState(GameComponent.getInitialState());
+        this.setState(this.getInitialState());
     }
 
     getPlayerOrder(a, b) {
