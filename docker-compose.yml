@@ -64,6 +64,6 @@ services:
             NODE_ENV: ${NODE_ENV}
         volumes:
             - .:/usr/src/app/
-        command: webpack
+        command: npm run build
         ports:
             - 9000:9000
