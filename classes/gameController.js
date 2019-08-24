@@ -261,7 +261,8 @@ gameController.prototype.end = function (complete) {
 	});
 
 	io.sockets.emit('game.end', {
-		winner: winningPlayer - 1
+		winner: winningPlayer - 1,
+        players
 	});
 
 	// use slice to get a copy of array and don't change it itself
@@ -398,10 +399,10 @@ gameController.prototype.ready = function () {
 
 	// Find the players head to head score
 	Player.headToHead(players[0].get('id'), players[1].get('id')).then(function (scores) {
-		// first need 4 players support
-		/*io.sockets.emit('stats.headToHead', {
+		// todo: special 4 players support needed?
+		io.sockets.emit('stats.headToHead', {
 			headToHead: scores
-		});*/
+		});
 	});
 
 };

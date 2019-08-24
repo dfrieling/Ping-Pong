@@ -241,36 +241,31 @@ export default class StatsComponent extends React.Component {
             
             if(typeof this.state.biggestWinningStreak !== 'undefined') {
                 biggestWinningStreak = (
-                    <div></div>
-                    /** first needs 4 player support
+                    /** todo: special first needs 4 player support needed? **/
                     <div className="stats__component stats__component--bordered" key="biggest-winning-streak">
                         <span className="header stats__title">Biggest Winning Streak</span>
                         <div className="stat_score">{this.state.biggestWinningStreak.player}</div>
                         <div className="stat_dash">-</div>
                         <div className="stat_score">{this.state.biggestWinningStreak.streak}</div>
                     </div>
-                    */
                 );
             }
             
             if(typeof this.state.mostConsecutiveLosses !== 'undefined') {
                 mostConsecutiveLosses = (
-                    <div></div>
-                    /** first needs 4 player support
+                    /** todo: special first needs 4 player support needed? **/
                     <div className="stats__component stats__component--bordered" key="most-consecutive-losses">
                         <span className="header stats__title">Most Consecutive Losses</span>
                         <div className="stat_score">{this.state.mostConsecutiveLosses.player}</div>
                         <div className="stat_dash">-</div>
                         <div className="stat_score">{this.state.mostConsecutiveLosses.streak}</div>
                     </div>
-                    */
                 );
             }
             
             if(typeof this.state.largestWhooping !== 'undefined') {
                 largestWhooping = (
-                    <div></div>
-                    /** first needs 4 player support
+                    /** todo: special first needs 4 player support needed? **/
                     <div className="stats__component stats__component--bordered" key="largest-whooping">
                         <span className="header stats__title">Largest Whooping</span>
                         <div className="stat_score">
@@ -283,7 +278,6 @@ export default class StatsComponent extends React.Component {
                             <span className="stat_score_player">{this.state.largestWhooping.players[1]}</span>
                         </div>
                     </div>
-                    */
                 );
             }
             
@@ -301,37 +295,38 @@ export default class StatsComponent extends React.Component {
         return (
             <div className={classes}>
                 <StatusComponent mini='true' />
-                <ReactCSSTransitionGroup transitionName='stats__logo'>
+                <ReactCSSTransitionGroup transitionName='stats__logo' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                     {logo}
                 </ReactCSSTransitionGroup>
                 <div className="stats__inner">
                     <span className="title">Stats</span>
                     <div className="stats_left stats">
                         <div className='stats__group'>
-                            <ReactCSSTransitionGroup transitionName='stats__components'>
+                            <ReactCSSTransitionGroup transitionName='stats__components' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                                 {firstMatch}
                                 {score}
                             </ReactCSSTransitionGroup>
                         </div>
                         <div className='stats__group'>
-                            <ReactCSSTransitionGroup transitionName='stats__components'>
+                            <ReactCSSTransitionGroup transitionName='stats__components' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                                 {leaderboard}
                             </ReactCSSTransitionGroup>
                         </div>
                     </div>
                     <div className="stats_right stats">
                         <div className='stats__group'>
-                            <ReactCSSTransitionGroup transitionName='stats__components'>
+                            <ReactCSSTransitionGroup transitionName='stats__components' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                                 {firstMatch}
                                 {headToHead}
                             </ReactCSSTransitionGroup>
                         </div>
                         <div className='stats__group'>
-                            <ReactCSSTransitionGroup transitionName='stats__components'>
+                            <ReactCSSTransitionGroup transitionName='stats__components'  transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                                 {biggestWinningStreak}
                                 {mostConsecutiveLosses}
-                                {largestWhooping}
-                                {mostFrequentPlayer}
+                                {/**{largestWhooping}**/}
+                                {/**{mostFrequentPlayer}**/}
+                                {totalCompanyGames}
                             </ReactCSSTransitionGroup>
                         </div>
                     </div>

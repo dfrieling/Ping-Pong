@@ -35,9 +35,12 @@ export default class LeaderboardComponent extends React.Component {
     
     
     hide = () => {
-        this.setState({
-            active: false
-        });
+        // todo make more pretty
+        if (this.state.active === true) {
+            this.setState({
+                active: false
+            });
+        }
     }
     
     

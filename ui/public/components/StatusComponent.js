@@ -172,7 +172,9 @@ export default class StatusComponent extends React.Component {
         // transitionEnter and transitionLeave are disabled for important errors - the infinite animation
         // within screws with the ReactCSSTransitionGroup enclosing it.
         return (
-            <ReactCSSTransitionGroup transitionName='status' transitionEnter={this.state.important} transitionLeave={this.state.important}>
+            <ReactCSSTransitionGroup transitionName='status' transitionEnter={this.state.important}
+                                     transitionLeave={this.state.important}  transitionEnterTimeout={500}
+                                     transitionLeaveTimeout={500}>
                 {status}
             </ReactCSSTransitionGroup>
         );

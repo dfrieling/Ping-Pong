@@ -182,13 +182,13 @@ export default class PlayerComponent extends React.Component {
 
         if(!this.state.name && typeof this.props.players[this.props.positionId] !== 'undefined' && this.props.players[this.props.positionId].image) {
             style = {
-                'background-image':
+                'backgroundImage':
                     this.props.players
                         .filter((v,i) => {return i%2 == this.props.positionId })
                         .sort((a,v) => { return this.getPlayerOrder(a, v); })
                         .map(function(v) { return 'url(img/players/' + v.image + ')'; })
                         .join(', '),
-                'background-position':
+                'backgroundPosition':
                     this.props.players
                         .filter((v,i) => {return i%2 == this.props.positionId })
                         .length > 1 ? 'bottom left, bottom right' : ''
@@ -197,13 +197,13 @@ export default class PlayerComponent extends React.Component {
 
 		if(this.state.win) {
             style = {
-                'background-image':
+                'backgroundImage':
                     this.props.players
                         .filter((v,i) => {return i%2 == this.props.positionId })
                         .sort((a,v) => { return this.getPlayerOrder(a, v); })
                         .map(function(v) { return 'url(img/players/win/' + v.image + ')'; })
                         .join(', '),
-                'background-position':
+                'backgroundPosition':
                     this.props.players
                         .filter((v,i) => {return i%2 == this.props.positionId })
                         .length > 1 ? 'bottom left, bottom right' : ''
@@ -259,7 +259,7 @@ export default class PlayerComponent extends React.Component {
                 {status}
                 {gamePoint}
                 {details}
-                <ReactCSSTransitionGroup transitionName='winner-announcement'>
+                <ReactCSSTransitionGroup transitionName='winner-announcement' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                     {winner}
                 </ReactCSSTransitionGroup>
             </div>

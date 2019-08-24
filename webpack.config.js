@@ -46,5 +46,10 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin()
-    ]
+    ],
+    devServer: {
+        contentBase: path.resolve( __dirname, 'ui/public/build' ),
+        compress: true,
+        port: 9000
+    }
 };
