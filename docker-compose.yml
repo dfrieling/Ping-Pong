@@ -30,7 +30,7 @@ services:
         volumes:
           - .:/usr/src/app/
         ports:
-          - "8080:82"
+          - "8080:8080"
           - "2000:2000"
         depends_on:
           - db
