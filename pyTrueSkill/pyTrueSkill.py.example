@@ -3,11 +3,11 @@ from trueskill import Rating, rate, quality
 import sqlalchemy as sqla
 
 #config
-db = 'pingpong'
-host = ''
-user = ''
-password = ''
+host = 'db'
 port = '3306'
+user = 'root'
+password = 'example'
+db = 'pingpong'
 
 #exemplary calls:
 #submitMatchResult(team1 = "2,3", team2="1,4", winningTeam=1)
