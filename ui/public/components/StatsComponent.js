@@ -162,7 +162,7 @@ export default class StatsComponent extends React.Component {
 
     getTotalCompanyGamesDisplay() {
         return <div className="stats__component stats__component--pin-bottom" key="total-company-games">
-            <span className="header stats__title">Total Company Games</span>
+            <span className="header stats__title">Total plista Games</span>
             <div className="stat_score">{this.state.totalCompanyGames}</div>
         </div>;
     }
@@ -184,7 +184,7 @@ export default class StatsComponent extends React.Component {
 
     getMostConsecutiveLossesDisplay() {
         return <div className="stats__component stats__component--bordered" key="most-consecutive-losses">
-            <span className="header stats__title">Most Consecutive Losses</span>
+            <span className="header stats__title">Most Consecutive Pummelings</span>
             <div className="stat_score">{this.state.mostConsecutiveLosses.player}</div>
             <div className="stat_dash">-</div>
             <div className="stat_score">{this.state.mostConsecutiveLosses.streak}</div>
