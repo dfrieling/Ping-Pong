@@ -136,27 +136,26 @@ gameController.prototype.addPlayer = function(playerID, custom, cb) {
     var
         attr = playerID !== null ? 'id' : custom.attr,
         value = playerID !== null ? playerID : custom.value,
-        position,
-	_this = this;
+        position;
 
     if(typeof cb === 'undefined') {
         cb = function() {};
     }
     
     // Load the model for the added player
-    Player.where(attr, value).fetch().then(function(player) {
+    Player.where(attr, value).fetch().then((player) => {
         
         if(!player) {
 				console.log(chalk.red('Newbie ' + value + ' wants to start a game'));
 
 				new Player({rfid: value, name: first_set_random_names.randomElement() + ' ' + second_set_random_names.randomElement(), image: 'alex.png', gender: 'male'}).save().then(function (newbie) {
 					console.log(JSON.stringify(newbie));
-					_this.manageIncomingPlayer(newbie, cb);
+					this.manageIncomingPlayer(newbie, cb);
 				});
 
 				return;
         }
-		_this.manageIncomingPlayer(player, cb);
+		this.manageIncomingPlayer(player, cb);
 
     });
     
@@ -247,13 +246,6 @@ gameController.prototype.end = function (complete) {
 		return this.reset();
 	}
 
-
-	/*if (winningPlayer - 1 === 0) {
-		updatedRanks = [elo.players[0].winningLeaderboardRank, elo.players[1].losingLeaderboardRank];
-	} else {
-		updatedRanks = [elo.players[0].losingLeaderboardRank, elo.players[1].winningLeaderboardRank];
-	}*/
-
 	io.sockets.emit('game.message', {
 		// first need 4 players support
 		// message: '<span class="player-0">' + players[0].get('name') + '</span> is now rank ' + updatedRanks[0] + ', <span class="player-1">' + players[1].get('name') + '</span> is rank ' + updatedRanks[1]
@@ -267,8 +259,8 @@ gameController.prototype.end = function (complete) {
 
 	// use slice to get a copy of array and don't change it itself
 	this.setPlayersForRematch(players.slice().reverse());
-	setTimeout(function () {
-		_this.setPlayersForRematch([]);
+	setTimeout(() => {
+		this.setPlayersForRematch([]);
 		io.sockets.emit('game.reset');
 	}, settings.winningViewDuration + 200);
 
@@ -281,20 +273,19 @@ gameController.prototype.end = function (complete) {
 
 	// Add the game to the DB
 	gameModel.save()
-		.then(function () {
+		.then(() => {
 			stats.emit('game.end');
-			_this.reset();
+			this.reset();
 		});
 
 	trueskill.submitMatch(players, winningPlayer);
 
-	players.forEach(function (player, i) {
+	players.forEach((player, i) => {
         console.log('writing trueskill for player: ' + player.id + " winningPlayer=" + winningPlayer);
 
 		// Increment play count
 		player.set('play_count', player.get('play_count') + 1);
 		player.save();
-
 	});
 
 	console.log(chalk.green('Game ending, ' + players[winningPlayer - 1].get('name') + ' won'));
