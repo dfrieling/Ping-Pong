@@ -1,9 +1,7 @@
 var
     path = require('path'),
     fs = require('fs'),
-    exec = require('child_process').exec,
     request = require('request'),
-    es = require('event-stream'),
     async = require('async'),
     slug = require('slug'),
     config = require('./config.js'),
@@ -47,7 +45,6 @@ function watchPlayers(loopCb, cbOnUpdate) {
 	Player.fetchAll().then(function(players) { 
 		currentPlayersJson = JSON.stringify(players.toJSON());
 
-		//console.log(currentPlayersJson + ' vs: ' + playersJson);
 		if(currentPlayersJson != playersJson) {
 			playersJson = currentPlayersJson;
 			gutil.log('change in player DB detected, retriggering sound downloading process...');
