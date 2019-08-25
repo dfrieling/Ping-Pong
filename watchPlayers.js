@@ -6,6 +6,7 @@ var
     es = require('event-stream'),
     async = require('async'),
     slug = require('slug'),
+    config = require('./config.js'),
     gutil = require('gulp-util');
 
 interval = 1000;
@@ -62,6 +63,7 @@ function updateSounds(cb) {
         scoreRange = [0, 40],
         announcements = [],
         downloads = [];
+
     announcements = [
         function(player) {
             return player + ' to serve';
@@ -74,7 +76,6 @@ function updateSounds(cb) {
         }
     ];
     
-
 	async.parallel([
 
         function(cb) {
@@ -122,7 +123,7 @@ function updateSounds(cb) {
 
 function getTTS(phrase, cb) {
     var
-	requestURL = 'http://api.voicerss.org/?key=' + config.tts.key + '&hl=' + config.tts.language + '&f=16khz_16bit_stereo&c=wav&src=' + phrase,
+	    requestURL = 'http://api.voicerss.org/?key=' + config.global.tts.key + '&hl=' + config.global.tts.language + '&f=16khz_16bit_stereo&c=wav&src=' + phrase,
         fileName = slug(phrase).toLowerCase() + '.wav',
         filePath = path.join('./ui/public/sounds/', fileName),
         res = true;
