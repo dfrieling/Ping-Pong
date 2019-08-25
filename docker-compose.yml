@@ -58,14 +58,6 @@ services:
         depends_on:
           - db
 
-    gulp:
-        build:
-            dockerfile: Dockerfile-gulp
-            context: .
-        volumes:
-            - .:/usr/src/app/
-        command: gulp
-
     webpack:
         restart: unless-stopped
         build:
