@@ -201,8 +201,7 @@ export default class StatsComponent extends React.Component {
             }
             
             headToHead = (
-                <div></div>
-                    /** first support 4 players
+                /** todo special support 4 players needed? **/
                 <div className="stats__component" key="head-to-head">
                     <span className="header stats__title">Head To Head</span>
                     <div className="stat_score">
@@ -214,7 +213,7 @@ export default class StatsComponent extends React.Component {
                         {headToHeadScore[1]}
                         <span className="stat_score_player">{this.props.players[1].name}</span>
                     </div>
-                </div>*/
+                </div>
             );
             
         }
