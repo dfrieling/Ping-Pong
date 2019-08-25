@@ -66,7 +66,7 @@ export default class LeaderboardComponent extends React.Component {
                 <li className='leaderboard__player' key={player.id}>
                     <div className='leaderboard__player__inner'>
                         <div className='leaderboard__player__name'>{i + 1}. {player.name}</div>
-                        <div className='leaderboard__player__rank'>{player.trueSkill_mu}</div>
+                        <div className='leaderboard__player__rank'>{Number.parseFloat(player.trueSkill_mu).toFixed(2)}</div>
                     </div>
                 </li>
             );
