@@ -15,6 +15,10 @@ module.exports = {
     },
     devtool: 'eval-source-map',
     watch: true,
+    /* needed for docker on windows */
+    watchOptions: {
+        poll: 500
+    },
     module: {
         rules: [
             {
