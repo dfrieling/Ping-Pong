@@ -21,8 +21,8 @@ export default class LeaderboardComponent extends React.Component {
         this.getLeaderboard();
 
         // todo: those lines used to be commented out
-        node.socket.on('leaderboard.show', this.show);
-        node.socket.on('leaderboard.hide', this.hide);
+        /*node.socket.on('leaderboard.show', this.show);
+        node.socket.on('leaderboard.hide', this.hide);*/
     }
     
     show = () => {
@@ -66,6 +66,7 @@ export default class LeaderboardComponent extends React.Component {
                 <li className='leaderboard__player' key={player.id}>
                     <div className='leaderboard__player__inner'>
                         <div className='leaderboard__player__name'>{i + 1}. {player.name}</div>
+                        <div className='leaderboard__player__rank'>{player.trueSkill_mu}</div>
                     </div>
                 </li>
             );
