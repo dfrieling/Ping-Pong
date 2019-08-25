@@ -49,7 +49,7 @@ module.exports = {
         maxScore: 11,
         mustWinBy: 2,
         minPlayers: 2,
-        maxPlayers: 2,
+        maxPlayers: 4,
         winningViewDuration: 6000, // The duration to show the winning view for before returning to the leaderboard
         feelers: {
             pingInterval: 3000,
