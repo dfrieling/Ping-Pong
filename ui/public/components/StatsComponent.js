@@ -333,7 +333,4 @@ export default class StatsComponent extends React.Component {
             </div>
         );
     }
-    
-
-    
 }

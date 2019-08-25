@@ -150,7 +150,6 @@ export default class GameComponent extends React.Component {
 
     }
 
-
     end = (data) => {
 
         var playerSound = '';
@@ -163,6 +162,10 @@ export default class GameComponent extends React.Component {
 
 //	this.queueSound(data.winner % 2 == 0 ? 'blue-team-dominating' : 'red-team-dominating');
         this.queueSound(slug(data.players[data.winner].name).toLowerCase() + '-won-the-game');
+    }
+
+    df() {
+        console.log("skdjf");
     }
 
     resetQueue() {
