@@ -81,7 +81,6 @@ function updateSounds(cb) {
         function(cb) {
             Player.fetchAll().then(function(players) {
                 async.each(players.toJSON(), function(player, cb) {
-                    gutil.log("processing for player " + player.name);
                     fetchAnnouncements(player.name, function(res) {
                         if(res.writable) {
                             gutil.log("pushing announcements for " + player.name + " to download queue..");
