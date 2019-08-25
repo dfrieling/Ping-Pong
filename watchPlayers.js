@@ -81,6 +81,7 @@ function updateSounds(cb) {
         function(cb) {
             Player.fetchAll().then(function(players) {
                 async.each(players.toJSON(), function(player, cb) {
+                    gutil.log("processing for player " + player.name);
                     fetchAnnouncements(player.name, function(res) {
                         if(res.writable) {
                             gutil.log("pushing announcements for " + player.name + " to download queue..");
@@ -92,23 +93,22 @@ function updateSounds(cb) {
             });
         },
 
-        function(cb) {
-            var
-                i = 0,
-                incomplete = function() {
-                    return i < scoreRange[1];
-                };
+        function (cb) {
+            let i = 0;
 
-            async.whilst(incomplete, function(cb) {
-                getTTS(i, function(res) {
-                    if(res.writable) {
-                        gutil.log("pushing tts of " + i + " to download queue");
-                        downloads.push(res);
-                    }
-                	i ++;
-                    cb();
-                });
-            }, cb);
+            async.whilst(
+                (cb) => cb(null, i < scoreRange[1]) ,
+                (cb) => {
+                    getTTS(i, function (res) {
+                        if (res.writable) {
+                            gutil.log("pushing tts of " + i + " to download queue");
+                            downloads.push(res);
+                        }
+                        i++;
+                        cb();
+                    });
+                },
+                cb);
         }
 
     ]);
