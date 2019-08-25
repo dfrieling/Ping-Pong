@@ -141,21 +141,25 @@ gameController.prototype.addPlayer = function(playerID, custom, cb) {
     if(typeof cb === 'undefined') {
         cb = function() {};
     }
-    
+
     // Load the model for the added player
     Player.where(attr, value).fetch().then((player) => {
-        
-        if(!player) {
-				console.log(chalk.red('Newbie ' + value + ' wants to start a game'));
 
-				new Player({rfid: value, name: first_set_random_names.randomElement() + ' ' + second_set_random_names.randomElement(), image: 'alex.png', gender: 'male'}).save().then(function (newbie) {
-					console.log(JSON.stringify(newbie));
-					this.manageIncomingPlayer(newbie, cb);
-				});
+        if (!player) {
+            console.log(chalk.red('Newbie ' + value + ' wants to start a game'));
 
-				return;
+            new Player({
+                    rfid: value, name: first_set_random_names.randomElement() + ' ' +
+                    second_set_random_names.randomElement(), image: 'alex.png', gender: 'male'
+                }
+            ).save().then((newbie) => {
+                console.log(JSON.stringify(newbie));
+                this.manageIncomingPlayer(newbie, cb);
+            });
+
+            return;
         }
-		this.manageIncomingPlayer(player, cb);
+        this.manageIncomingPlayer(player, cb);
 
     });
     
