@@ -126,7 +126,7 @@ export default class StatsComponent extends React.Component {
                         </div>
                         <div className='stats__group'>
                             <ReactCSSTransitionGroup transitionName='stats__components' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
-                                {this.getLeaderboardDisplay()}
+                                {this.state.fullView ? this.getLeaderboardDisplay() : undefined}
                             </ReactCSSTransitionGroup>
                         </div>
                     </div>
