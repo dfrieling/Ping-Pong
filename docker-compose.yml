@@ -63,21 +63,9 @@ services:
         environment:
             NODE_ENV: ${NODE_ENV}
         volumes:
-            #- ./ui/:/usr/src/app/ui/
-            #- ./webpack.config.js:/usr/src/app/webpack.config.js
-            - .:/usr/src/app/
+            # only mounting the minimum for fast performance on docker on windows
+            - ./ui/:/usr/src/app/ui/
+            - ./webpack.config.js:/usr/src/app/webpack.config.js
         command: npm run build
         ports:
             - 9000:9000
-
-    bg-sync:
-        image: cweagans/bg-sync
-        volumes:
-            - .:/source
-        volumes_from:
-            - webpack
-        environment:
-            - SYNC_DESTINATION=/usr/src/app/
-            - SYNC_MAX_INOTIFY_WATCHES=40000
-            - SYNC_VERBOSE=1
-        privileged: true
