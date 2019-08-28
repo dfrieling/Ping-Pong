@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:12
 
 RUN mkdir -p /usr/src/app
 RUN chmod -R 777 /usr/src/app
