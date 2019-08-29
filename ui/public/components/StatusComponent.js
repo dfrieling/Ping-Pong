@@ -91,7 +91,7 @@ export default class StatusComponent extends React.Component {
     
     
     
-    resolveError() {
+    resolveError = () => {
         if(this.state.error) {
             this.reset();
         }
@@ -99,7 +99,7 @@ export default class StatusComponent extends React.Component {
     
     
     
-    cardReadError() {
+    cardReadError = () => {
         this.error('Card reader error', 3000);
     }
     
