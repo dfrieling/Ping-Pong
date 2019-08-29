@@ -44,7 +44,6 @@ export default class GameComponent extends React.Component {
     }
 
     componentDidMount = () => {
-
         node.socket.on('game.end', this.end);
         node.socket.on('game.score', this.score);
         node.socket.on('game.reset', this.reset);
@@ -86,7 +85,6 @@ export default class GameComponent extends React.Component {
     rematch() {
         //this.queueSound('proceed');
     }
-
 
     switchServer = (player, nextServer) => {
         this.setState({
