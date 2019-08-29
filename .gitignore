@@ -4,7 +4,6 @@ node_modules/
 ui/public/build/
 ui/public/sounds/
 ui/public/img/
-versions/
 config.js
 pyTrueSkill/pyTrueSkill.py
 mysql/
