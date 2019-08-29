@@ -1,8 +1,8 @@
 module.exports = {
     development: {
         clientUrl: 'http://localhost',
-        clientPort: 82,
-        wsPort: 2000,
+        clientPort: 8080,
+        wsPort: 2020,
         cardReaderPort: 123,
         database: {
             client: 'mysql',
