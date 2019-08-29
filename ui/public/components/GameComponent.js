@@ -9,14 +9,12 @@ var
     React = require('react'),
     AmpersandState = require('ampersand-state'),
 	slug = require('slug'),
-    config = window.config,
     node = require('../js/node'),
     soundPath = '/sounds/',
     PlayerModel,
     playerProps,
 	soundQueue = [],
-	soundsPlaying = false,
-    players = [];
+	soundsPlaying = false;
 
 // The beginnings of a model for sharing state between components
 playerProps = {
@@ -40,11 +38,12 @@ export default class GameComponent extends React.Component {
             winner: undefined,
             score: [0, 0],
             table: undefined,
-            cardReader: undefined
+            cardReader: undefined,
+            players: [],
         };
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
 
         node.socket.on('game.end', this.end);
         node.socket.on('game.score', this.score);
@@ -64,8 +63,7 @@ export default class GameComponent extends React.Component {
 
         node.socket.on('player.join', (data) => {
             console.log(['player.join', data.player.name]);
-            players[data.position] = new PlayerModel();
-            players[data.position].set(data.player);
+            this.addPlayerToState(data.player, data.position);
         });
 
         node.socket.on('player.rematch', () => {
@@ -75,6 +73,15 @@ export default class GameComponent extends React.Component {
 
     }
 
+    addPlayerToState = (player, position) => {
+        let newPlayers = this.state.players;
+        newPlayers[position] = new PlayerModel();
+        newPlayers[position].set(player);
+
+        this.setState({
+            players: newPlayers
+        });
+    }
 
     rematch() {
         //this.queueSound('proceed');
@@ -90,10 +97,8 @@ export default class GameComponent extends React.Component {
             nextServer: nextServer
         });
 
-        const playerSound = players[player].name;
-
         // cut down the delay between "player X to serve" and the score announcement by 500 ms
-        this.queueSound(slug(playerSound.toLowerCase()) + '-to-serve', -500);
+        this.queueSound(slug(this.state.players[player].name.toLowerCase()) + '-to-serve', -500);
     }
 
 
@@ -119,16 +124,13 @@ export default class GameComponent extends React.Component {
 
     gamePoint = (data) => {
 
-        var
-            player = data.player,
-            playerSound;
+        var player = data.player;
 
         // delayed so it happens after the score announcements
         setTimeout(() => {
             // if winner is clear already don't say game point again
             if (typeof this.state.winner === 'undefined') {
-                playerSound = players[player].name;
-                this.queueSound('game-point-' + slug(playerSound.toLowerCase()));
+                this.queueSound('game-point-' + slug(this.state.players[player].name.toLowerCase()));
             }
         }, 600);
     }
@@ -152,20 +154,14 @@ export default class GameComponent extends React.Component {
 
     end = (data) => {
 
-        var playerSound = '';
-
         this.resetQueue();
 
         this.setState({winner: data.winner});
 
         this.queueSound('game_end');
 
-//	this.queueSound(data.winner % 2 == 0 ? 'blue-team-dominating' : 'red-team-dominating');
+        //this.queueSound(data.winner % 2 == 0 ? 'blue-team-dominating' : 'red-team-dominating');
         this.queueSound(slug(data.players[data.winner].name).toLowerCase() + '-won-the-game');
-    }
-
-    df() {
-        console.log("skdjf");
     }
 
     resetQueue() {
@@ -260,11 +256,6 @@ export default class GameComponent extends React.Component {
     }
 
     reset = () => {
-        setTimeout(() => {
-                players = [];
-            }, 1500
-        );
-
         this.setState(this.getInitialState());
     }
 
@@ -272,13 +263,13 @@ export default class GameComponent extends React.Component {
         return (
             <div>
                 <div className='player_container'>
-                    <PlayerComponent positionId='0' players={players} server={this.state.server}
-                                     winner={this.state.winner} nextServer={this.state.nextServer}/>
-                    <PlayerComponent positionId='1' players={players} server={this.state.server}
-                                     winner={this.state.winner} nextServer={this.state.nextServer}/>
-                    <StatusComponent main='true'/>
+                    <PlayerComponent positionId='0' players={this.state.players} server={this.state.server}
+                                     winner={this.state.winner} nextServer={this.state.nextServer} />
+                    <PlayerComponent positionId='1' players={this.state.players} server={this.state.server}
+                                     winner={this.state.winner} nextServer={this.state.nextServer} />
+                    <StatusComponent main='true' />
                 </div>
-                <StatsComponent players={players} server={this.state.server} score={this.state.score}/>
+                <StatsComponent players={this.state.players} server={this.state.server} score={this.state.score}/>
                 <div className='status-indicators'>
                     <StatusIndicatorComponent state={this.state.table}/>
                     <StatusIndicatorComponent state={this.state.cardReader}/>

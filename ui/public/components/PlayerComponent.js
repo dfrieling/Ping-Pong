@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import GameComponent from "./GameComponent";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var node = require('../js/node');
@@ -24,19 +23,12 @@ export default class PlayerComponent extends React.Component {
     }
 
     componentDidMount() {
-        
-        this.props.players.map((player) => {
-            player.on('change', function(player) {
-				this.join(player);
-			});
-        });
-        
         node.socket.on('game.score', (data) => {
             if(data.player % 2 == this.props.positionId) {
                 this.score(data.score);
             }
         });
-        
+
         node.socket.on('game.gamePoint', (data) => {
             if(data.player % 2 == this.props.positionId) {
                 this.gamePoint();
@@ -68,33 +60,18 @@ export default class PlayerComponent extends React.Component {
 
     }
 
-
-
-    join = (player) => {
-        this.setState({
-            name: player.name,
-            image: player.image
-        });
-    }
-    
-    
-    
     score = (score) => {
         this.setState({
             score: score
         });
     }
-    
-    
-    
+
     cancelPoint = (score) => {
         this.setState({
             score: score
         });
     }
-    
-    
-    
+
     gamePoint = (isGamePoint) => {
         
         isGamePoint = typeof isGamePoint === 'undefined' ? true : isGamePoint;
@@ -128,9 +105,7 @@ export default class PlayerComponent extends React.Component {
         }
         
     }
-    
-    
-    
+
     win = () => {
         
         this.gamePoint(false);
@@ -141,9 +116,7 @@ export default class PlayerComponent extends React.Component {
         });
         
     }
-    
-    
-    
+
     lose = () => {
         
         this.gamePoint(false);
@@ -167,9 +140,8 @@ export default class PlayerComponent extends React.Component {
             != a.name
         )) ? -1 : 1;
     }
-    
-    render() {
 
+    render() {
         var
             playerClasses,
             style = {},
