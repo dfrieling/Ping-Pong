@@ -28,9 +28,12 @@ services:
           NODE_ENV: ${NODE_ENV}
         volumes:
           - .:/usr/src/app/
+          - ./config.js:/usr/src/app/config.js
+          - ./pyTrueSkill/pyTrueSkill.py:/usr/src/app/pyTrueSkill/pyTrueSkill.py
         ports:
           - "8080:8080"
           - "2000:2000"
+          - "234:234"
         depends_on:
           - db
 
@@ -41,6 +44,7 @@ services:
             NODE_ENV: ${NODE_ENV}
         volumes:
             - .:/usr/src/app/
+            - ./config.js:/usr/src/app/config.js
         depends_on:
             - db
         working_dir: /usr/src/app/
@@ -54,6 +58,7 @@ services:
           NODE_ENV: ${NODE_ENV}
         volumes:
           - .:/usr/src/app/
+          - ./config.js:/usr/src/app/config.js
         command: bash -c "node create_database.js && knex migrate:latest --env ${NODE_ENV} migrate"
         depends_on:
           - db

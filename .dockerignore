@@ -5,5 +5,6 @@ ui/public/build/
 ui/public/sounds/
 ui/public/img/
 versions/
-trueSkill/trueSkill.py
+pytrueSkill/pytrueSkill.py
 mysql/
+config.js
