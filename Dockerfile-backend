@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 RUN npm install -g nodemon knex
 RUN npm install
 RUN apt-get update \
-  && apt-get install -y netcat net-tools python-pip
+  && apt-get install -y netcat net-tools python-pip vim
 
 RUN pip install trueskill sqlalchemy mysql-python
 
