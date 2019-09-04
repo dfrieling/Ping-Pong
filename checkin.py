@@ -11,7 +11,7 @@ else:
     port = 234
 
 while True:
-	fp = open('/dev/hidraw3', 'rb')
+	fp = open('/dev/hidraw0', 'rb')
 	
 	
 	ss = ""
