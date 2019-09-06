@@ -3,7 +3,7 @@ module.exports = {
         clientUrl: 'http://localhost',
         clientPort: 8080,
         wsPort: 2020,
-        cardReaderPort: 123,
+        cardReaderPort: 234,
         database: {
             client: 'mysql',
             connection: {
