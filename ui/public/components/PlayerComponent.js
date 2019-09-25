@@ -1,22 +1,17 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-
-var
-    React = require('react'),
-    ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup'),
-    node = require('../js/node');
-
-
-    
-var PlayerComponent = module.exports = React.createClass({
+var node = require('../js/node');
 
 
 
-    getInitialState: function() {
+export default class PlayerComponent extends React.Component {
+
+    state = this.getInitialState();
+
+    getInitialState() {
         return {
             name: '',
             score: 0,
@@ -25,88 +20,59 @@ var PlayerComponent = module.exports = React.createClass({
             gamePoint: false,
             gamePointVisible: true
         };
-    },
+    }
 
-
-
-    componentDidMount: function() {
-        
-        var
-            _this = this;
-
-        this.props.players.map(function(player) {
-            player.on('change', function(player) {
-				_this.join(player);
-			});
-        });
-        
-        node.socket.on('game.score', function(data) {
-            if(data.player % 2 == _this.props.positionId) {
-                _this.score(data.score);
+    componentDidMount() {
+        node.socket.on('game.score', (data) => {
+            if(data.player % 2 == this.props.positionId) {
+                this.score(data.score);
             }
         });
-        
-        node.socket.on('game.gamePoint', function(data) {
-            if(data.player % 2 == _this.props.positionId) {
-                _this.gamePoint();
+
+        node.socket.on('game.gamePoint', (data) => {
+            if(data.player % 2 == this.props.positionId) {
+                this.gamePoint();
             } else {
-                _this.gamePoint(false);
+                this.gamePoint(false);
             }
         });
         
-        node.socket.on('game.notGamePoint', function() {
-            _this.gamePoint(false);
+        node.socket.on('game.notGamePoint', () => {
+            this.gamePoint(false);
         });
         
-        node.socket.on('game.cancelPoint', function(data) {
-            if(data.player % 2 == _this.props.positionId) {
-                _this.cancelPoint(data.score);
+        node.socket.on('game.cancelPoint', (data) => {
+            if(data.player % 2 == this.props.positionId) {
+                this.cancelPoint(data.score);
             }
         });
 
-        node.socket.on('game.end', function(data) {
-            if(data.winner % 2 == _this.props.positionId) {
-                return _this.win();
+        node.socket.on('game.end', (data) => {
+            if(data.winner % 2 == this.props.positionId) {
+                return this.win();
             }
-            _this.lose();
+            this.lose();
         });
 
-        node.socket.on('game.reset', function() {
-            setTimeout(_this.reset, 1500);
+        node.socket.on('game.reset', () => {
+            setTimeout(this.reset, 1500);
         });
 
-    },
+    }
 
-
-
-    join: function(player) {
-        this.setState({
-            name: player.name,
-            image: player.image
-        });
-    },
-    
-    
-    
-    score: function(score) {
+    score = (score) => {
         this.setState({
             score: score
         });
-    },
-    
-    
-    
-    cancelPoint: function(score) {
+    }
+
+    cancelPoint = (score) => {
         this.setState({
             score: score
         });
-    },
-    
-    
-    
-    gamePoint: function(isGamePoint) {
-        
-        var _this = this;
+    }
+
+    gamePoint = (isGamePoint) => {
         
         isGamePoint = typeof isGamePoint === 'undefined' ? true : isGamePoint;
         
@@ -116,11 +82,11 @@ var PlayerComponent = module.exports = React.createClass({
                 gamePoint: true
             });
             
-            if(typeof _this.pulse === 'undefined') {
-                this.pulse = setInterval(function() {
-                    if(_this.props.server % 2 == _this.props.positionId) {
-                        _this.setState({
-                            gamePointVisible: !_this.state.gamePointVisible
+            if(typeof this.pulse === 'undefined') {
+                this.pulse = setInterval(() => {
+                    if(this.props.server % 2 == this.props.positionId) {
+                        this.setState({
+                            gamePointVisible: !this.state.gamePointVisible
                         });
                     }
                 }, 900);
@@ -133,16 +99,14 @@ var PlayerComponent = module.exports = React.createClass({
                 gamePointVisible: true
             });
             
-            clearTimeout(_this.pulse);
-            _this.pulse = undefined;
+            clearTimeout(this.pulse);
+            this.pulse = undefined;
             
         }
         
-    },
-    
-    
-    
-    win: function() {
+    }
+
+    win = () => {
         
         this.gamePoint(false);
         
@@ -151,11 +115,9 @@ var PlayerComponent = module.exports = React.createClass({
             serving: false
         });
         
-    },
-    
-    
-    
-    lose: function() {
+    }
+
+    lose = () => {
         
         this.gamePoint(false);
         
@@ -164,27 +126,23 @@ var PlayerComponent = module.exports = React.createClass({
             serving: false
         });
         
-    },
+    }
 
-
-
-    reset: function() {
+    reset = () => {
         this.gamePoint(false);
-        this.replaceState(this.getInitialState());
-    },
-    
-    getPlayerOrder: function(a, b, _this) {
-        return (!( typeof _this.props.server !== 'undefined' && typeof _this.props.nextServer !== 'undefined') ||
-        ( typeof _this.props.server !== 'undefined' && typeof _this.props.nextServer !== 'undefined'
-            && _this.props.players[_this.props.nextServer].name != a.name && _this.props.players[_this.props.server].name
+        this.setState(this.getInitialState());
+    }
+
+    getPlayerOrder(a, b) {
+        return (!( typeof this.props.server !== 'undefined' && typeof this.props.nextServer !== 'undefined') ||
+        ( typeof this.props.server !== 'undefined' && typeof this.props.nextServer !== 'undefined'
+            && this.props.players[this.props.nextServer].name != a.name && this.props.players[this.props.server].name
             != a.name
         )) ? -1 : 1;
-    },
-    
-    render: function() {
+    }
 
+    render() {
         var
-			_this = this,
             playerClasses,
             style = {},
             status,
@@ -196,30 +154,30 @@ var PlayerComponent = module.exports = React.createClass({
 
         if(!this.state.name && typeof this.props.players[this.props.positionId] !== 'undefined' && this.props.players[this.props.positionId].image) {
             style = {
-                'background-image':
+                'backgroundImage':
                     this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
-                        .sort(function(a,v) { return _this.getPlayerOrder(a, v, _this); })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
+                        .sort((a,v) => { return this.getPlayerOrder(a, v); })
                         .map(function(v) { return 'url(img/players/' + v.image + ')'; })
                         .join(', '),
-                'background-position':
+                'backgroundPosition':
                     this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
                         .length > 1 ? 'bottom left, bottom right' : ''
             }
         }
 
 		if(this.state.win) {
             style = {
-                'background-image':
+                'backgroundImage':
                     this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
-                        .sort(function(a,v) { return _this.getPlayerOrder(a, v, _this); })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
+                        .sort((a,v) => { return this.getPlayerOrder(a, v); })
                         .map(function(v) { return 'url(img/players/win/' + v.image + ')'; })
                         .join(', '),
-                'background-position':
+                'backgroundPosition':
                     this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
                         .length > 1 ? 'bottom left, bottom right' : ''
             }
 		}
@@ -243,8 +201,8 @@ var PlayerComponent = module.exports = React.createClass({
                 <div className='details'>
                     <div className='score'>{this.state.score}</div>
                     <div className='name'>{(this.props.players.length && this.props.players
-                        .filter(function(v,i) {return i%2 == _this.props.positionId })
-                        .sort(function(a,v) { return _this.getPlayerOrder(a, v, _this); })
+                        .filter((v,i) => {return i%2 == this.props.positionId })
+                        .sort((a,v) => { return this.getPlayerOrder(a, v); })
                         .map(function(v) { return v.name; })
                         .join(' & ')) || 'Add player'}</div>
                 </div>
@@ -263,7 +221,7 @@ var PlayerComponent = module.exports = React.createClass({
         
         if(this.state.win) {
             winner = (
-                <div className='winner'>{this.props.players.filter(function(v,i){return i%2 == _this.props.positionId;}).map(function(v) { return v.name; }).join(' & ')} {this.props.players.length > 2 ? 'win' : 'wins'}</div>
+                <div className='winner'>{this.props.players.filter((v,i) => {return i%2 == this.props.positionId;}).map(function(v) { return v.name; }).join(' & ')} {this.props.players.length > 2 ? 'win' : 'wins'}</div>
             );
         }
 
@@ -273,14 +231,11 @@ var PlayerComponent = module.exports = React.createClass({
                 {status}
                 {gamePoint}
                 {details}
-                <ReactCSSTransitionGroup transitionName='winner-announcement'>
+                <ReactCSSTransitionGroup transitionName='winner-announcement' transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                     {winner}
                 </ReactCSSTransitionGroup>
             </div>
         );
 
     }
-    
-
-    
-});
+}

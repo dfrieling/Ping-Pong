@@ -1,57 +1,51 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
-
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var
     React = require('react'),
-    ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup'),
     config = window.config,
     node = require('../js/node');
 
 
 
-var GameComponent = module.exports = React.createClass({
+export default class StatusComponent extends React.Component {
 
+    state = this.getInitialState();
 
-
-    getInitialState: function() {
+    getInitialState() {
         return {
             error: false,
             important: false,
             message: ''
         };
-    },
+    }
 
 
 
-    componentDidMount: function() {
+    componentDidMount() {
 
-        var _this = this;
+        node.socket.on('core.batteryLow', this.batteryLow);
+        node.socket.on('core.online', this.batteryReplenished);
+        node.socket.on('game.cardReadError', this.cardReadError);
         
-        node.socket.on('core.batteryLow', _this.batteryLow);
-        node.socket.on('core.online', _this.batteryReplenished);
-        node.socket.on('game.cardReadError', _this.cardReadError);
-        
-        node.socket.on('game.message', function(data) {
-            _this.info(data.message);
+        node.socket.on('game.message', (data) => {
+            this.info(data.message);
         });
         
-        node.socket.on('game.playerNotFound', function(data) {
-            _this.playerNotFound(data);
+        node.socket.on('game.playerNotFound', (data) => {
+            this.playerNotFound(data);
         });
 
-        node.socket.on('game.end', function() {
-            setTimeout(_this.clearInfo, config.winningViewDuration);
+        node.socket.on('game.end', () => {
+            setTimeout(this.clearInfo, config.winningViewDuration);
         });
 
-    },
+    }
     
     
     
-    error: function(error, timeout, important) {
+    error = (error, timeout, important) => {
 
         if(this.state.important && !important) {
             return;
@@ -72,17 +66,17 @@ var GameComponent = module.exports = React.createClass({
             setTimeout(this.resolveError, timeout);
         }
         
-    },
+    }
 
 
 
-    importantError: function(error) {
+    importantError(error) {
         return this.error(error, undefined, true);
-    },
+    }
     
     
     
-    info: function(message) {
+    info = (message) => {
 
         if(this.state.important) {
             return;
@@ -93,57 +87,58 @@ var GameComponent = module.exports = React.createClass({
             message: message
         });
 
-    },
+    }
     
     
     
-    resolveError: function() {
+    resolveError = () => {
         if(this.state.error) {
             this.reset();
         }
-    },
+    }
     
     
     
-    cardReadError: function() {
+    cardReadError = () => {
         this.error('Card reader error', 3000);
-    },
+    }
     
     
     
-    batteryLow: function() {
+    batteryLow() {
         this.importantError('Table batteries low');
-    },
+    }
     
     
     
-    batteryReplenished: function() {
+    batteryReplenished() {
         this.resolveError();
-    },
+    }
     
     
     
-    playerNotFound: function(data) {
+    playerNotFound(data) {
         this.error('Player with ' + data.attr + ' ' + data.value + ' not found', 3000);
-    },
+    }
     
     
     
-    clearInfo: function() {
+    clearInfo = () => {
         if(!this.state.error) {
             this.reset();
         }
-    },
+    }
     
     
     
-    reset: function() {
-        this.replaceState(this.getInitialState());
-    },
+    reset = () => {
+        //todo
+        this.setState(this.getInitialState());
+    }
     
     
     
-    render: function() {
+    render() {
         
         var
             classes = 'info',
@@ -177,7 +172,9 @@ var GameComponent = module.exports = React.createClass({
         // transitionEnter and transitionLeave are disabled for important errors - the infinite animation
         // within screws with the ReactCSSTransitionGroup enclosing it.
         return (
-            <ReactCSSTransitionGroup transitionName='status' transitionEnter={this.state.important} transitionLeave={this.state.important}>
+            <ReactCSSTransitionGroup transitionName='status' transitionEnter={this.state.important}
+                                     transitionLeave={this.state.important}  transitionEnterTimeout={500}
+                                     transitionLeaveTimeout={500}>
                 {status}
             </ReactCSSTransitionGroup>
         );
@@ -186,4 +183,4 @@ var GameComponent = module.exports = React.createClass({
     
 
     
-});
+}

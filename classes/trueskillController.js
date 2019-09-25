@@ -1,5 +1,6 @@
-var PythonShell = require('python-shell');
-const TRUESKILL_FILENAME = 'trueSkill/trueSkill.py';
+const {PythonShell} = require('python-shell');
+
+const TRUESKILL_FILENAME = 'pyTrueSkill/pyTrueSkill.py';
 
 module.exports = function() {
     return this instanceof TrueskillController
@@ -33,7 +34,8 @@ TrueskillController.prototype.submitMatch = function(players, winningTeam) {
         .join(',');
 
     var options = {
-        args: ['submitMatchResult', team0, team1, winningTeam]
+        args: ['submitMatchResult', team0, team1, winningTeam],
+        pythonPath: '/usr/bin/python',
     };
 
     console.log('players: ' + JSON.stringify(players));

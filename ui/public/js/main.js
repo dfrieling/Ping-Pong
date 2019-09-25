@@ -1,12 +1,14 @@
 require('./modernizr');
 
+import ReactDOM from 'react-dom';
+import React from "react";
+import GameComponent from "../components/GameComponent";
+
 var
-    React = require('react'),
-    GameComponent = require('../components/GameComponent'),
     node = require('./node.js');
 
 $(function() {
-    React.renderComponent(GameComponent(), document.getElementById('game'));
+    ReactDOM.render(<GameComponent/>, document.getElementById('game'));
 });
 
 function debug(msg, data, consoleOnly) {

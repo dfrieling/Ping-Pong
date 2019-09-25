@@ -1,22 +1,32 @@
 module.exports = {
     development: {
         clientUrl: 'http://localhost',
-        clientPort: 82,
-        wsPort: 2000,
-        cardReaderPort: 123,
+        clientPort: 8080,
+        wsPort: 2020,
+        cardReaderPort: 234,
         database: {
             client: 'mysql',
             connection: {
-                host: 'localhost',
+                host: 'db',
                 port: 3306,
                 user: 'root',
-                password: 'root',
-                database: 'ballgame',
+                password: 'example',
+                database: 'pingpong',
             },
             migrations: {
                 directory: __dirname + '/migrations',
                 tableName: 'migrations'
-            }
+            },
+            pool: {
+                min: 0,
+                max: 10,
+                createTimeoutMillis: 3000,
+                acquireTimeoutMillis: 30000,
+                idleTimeoutMillis: 30000,
+                reapIntervalMillis: 1000,
+                createRetryIntervalMillis: 100,
+                propagateCreateError: false
+            },
         }
     },
     production: {
@@ -49,7 +59,7 @@ module.exports = {
         maxScore: 11,
         mustWinBy: 2,
         minPlayers: 2,
-        maxPlayers: 2,
+        maxPlayers: 4,
         winningViewDuration: 6000, // The duration to show the winning view for before returning to the leaderboard
         feelers: {
             pingInterval: 3000,
@@ -59,6 +69,10 @@ module.exports = {
         cardReader: {
             pingInterval: 3000,
             pingThreshold: 250
+        },
+        tts: {
+            key: '',
+            language: 'en-us'
         }
     }
 };

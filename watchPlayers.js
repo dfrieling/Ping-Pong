@@ -1,11 +1,10 @@
 var
     path = require('path'),
     fs = require('fs'),
-    exec = require('child_process').exec,
     request = require('request'),
-    es = require('event-stream'),
     async = require('async'),
     slug = require('slug'),
+    config = require('./config.js'),
     gutil = require('gulp-util');
 
 interval = 1000;
@@ -46,7 +45,6 @@ function watchPlayers(loopCb, cbOnUpdate) {
 	Player.fetchAll().then(function(players) { 
 		currentPlayersJson = JSON.stringify(players.toJSON());
 
-		//console.log(currentPlayersJson + ' vs: ' + playersJson);
 		if(currentPlayersJson != playersJson) {
 			playersJson = currentPlayersJson;
 			gutil.log('change in player DB detected, retriggering sound downloading process...');
@@ -62,6 +60,7 @@ function updateSounds(cb) {
         scoreRange = [0, 40],
         announcements = [],
         downloads = [];
+
     announcements = [
         function(player) {
             return player + ' to serve';
@@ -74,7 +73,6 @@ function updateSounds(cb) {
         }
     ];
     
-
 	async.parallel([
 
         function(cb) {
@@ -91,23 +89,22 @@ function updateSounds(cb) {
             });
         },
 
-        function(cb) {
-            var
-                i = 0,
-                incomplete = function() {
-                    return i < scoreRange[1];
-                };
+        function (cb) {
+            let i = 0;
 
-            async.whilst(incomplete, function(cb) {
-                getTTS(i, 'en-US', function(res) {
-                    if(res.writable) {
-                        gutil.log("pushing tts of " + i + " to download queue");
-                        downloads.push(res);
-                    }
-                	i ++;
-                    cb();
-                });
-            }, cb);
+            async.whilst(
+                (cb) => cb(null, i < scoreRange[1]) ,
+                (cb) => {
+                    getTTS(i, function (res) {
+                        if (res.writable) {
+                            gutil.log("pushing tts of " + i + " to download queue");
+                            downloads.push(res);
+                        }
+                        i++;
+                        cb();
+                    });
+                },
+                cb);
         }
 
     ]);
@@ -115,17 +112,14 @@ function updateSounds(cb) {
     function fetchAnnouncements(player, cb) {
         async.each(announcements, function(announcement, cb) {
             announcement = announcement(player);
-            getTTS(announcement, 'en-US', cb);
+            getTTS(announcement, cb);
         }, cb);
     }
 }
 
-function getTTS(phrase, language, cb) {
-
-    language = language || 'en-gb';
-
+function getTTS(phrase, cb) {
     var
-        requestURL = 'http://api.voicerss.org/?key=9b6c5034dfc14589807fa9969d7ecea4&hl=' + language + '&f=16khz_16bit_stereo&c=wav&src=' + phrase,
+	    requestURL = 'http://api.voicerss.org/?key=' + config.global.tts.key + '&hl=' + config.global.tts.language + '&f=16khz_16bit_stereo&c=wav&src=' + phrase,
         fileName = slug(phrase).toLowerCase() + '.wav',
         filePath = path.join('./ui/public/sounds/', fileName),
         res = true;

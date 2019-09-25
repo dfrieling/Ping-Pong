@@ -1,0 +1,87 @@
+version: '3.1'
+
+services:
+
+    db:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: example
+        volumes:
+          - ./mysql:/var/lib/mysql
+        ports:
+          - 3316:3306
+
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - "8081:8080"
+
+    backend:
+        build:
+            dockerfile: Dockerfile-backend
+            context: .
+        restart: always
+        environment:
+          NODE_ENV: ${NODE_ENV}
+        volumes:
+          - .:/usr/src/app/
+          - ./config.js:/usr/src/app/config.js
+          - ./pyTrueSkill/pyTrueSkill.py:/usr/src/app/pyTrueSkill/pyTrueSkill.py
+        ports:
+          - "8080:8080"
+          - "2000:2000"
+          - "234:234"
+        depends_on:
+          - db
+
+    soundloader:
+        image: node
+        restart: always
+        environment:
+            NODE_ENV: ${NODE_ENV}
+        volumes:
+            - .:/usr/src/app/
+            - ./config.js:/usr/src/app/config.js
+        depends_on:
+            - db
+        working_dir: /usr/src/app/
+        command: node watchPlayers.js
+
+    migrations:
+        build:
+          dockerfile: Dockerfile-migrations
+          context: .
+        environment:
+          NODE_ENV: ${NODE_ENV}
+        volumes:
+          - .:/usr/src/app/
+          - ./config.js:/usr/src/app/config.js
+        command: bash -c "node create_database.js && knex migrate:latest --env ${NODE_ENV} migrate"
+        depends_on:
+          - db
+
+    webpack:
+        restart: unless-stopped
+        build:
+            dockerfile: Dockerfile-webpack
+            context: .
+        environment:
+            NODE_ENV: ${NODE_ENV}
+        volumes:
+            # only mounting the minimum for fast performance on docker on windows
+            - ./ui/:/usr/src/app/ui/
+            - ./webpack.config.js:/usr/src/app/webpack.config.js
+        command: npm run build
+        ports:
+            - 9000:9000
+
+    radio:
+        restart: unless-stopped
+        build:
+            dockerfile: Dockerfile-radio
+            context: .
+        environment:
+            WS_PORT: 234

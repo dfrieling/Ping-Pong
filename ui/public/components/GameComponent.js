@@ -1,30 +1,25 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
+
+import PlayerComponent from "./PlayerComponent";
+import StatsComponent from "./StatsComponent";
+import StatusIndicatorComponent from "./StatusIndicatorComponent";
+import StatusComponent from "./StatusComponent";
 
 var
     React = require('react'),
     AmpersandState = require('ampersand-state'),
 	slug = require('slug'),
-    config = window.config,
     node = require('../js/node'),
-    AdminComponent = require('./AdminComponent'),
-    PlayerComponent = require('./PlayerComponent'),
-    StatusComponent = require('./StatusComponent'),
-    StatusIndicatorComponent = require('./StatusIndicatorComponent'),
-    StatsComponent = require('./StatsComponent'),
     soundPath = '/sounds/',
     PlayerModel,
     playerProps,
 	soundQueue = [],
-	soundsPlaying = false,
-    players = [];
+	soundsPlaying = false;
 
 // The beginnings of a model for sharing state between components
 playerProps = {
     name: 'string',
-    image: 'string'
+    image: 'string',
 };
 
 PlayerModel = AmpersandState.extend({
@@ -33,211 +28,187 @@ PlayerModel = AmpersandState.extend({
 
 
 
-var GameComponent = module.exports = React.createClass({
+export default class GameComponent extends React.Component {
 
+    state = this.getInitialState();
 
-
-
-    getInitialState: function() {
+    getInitialState() {
         return {
             server: undefined,
             winner: undefined,
             score: [0, 0],
             table: undefined,
-            cardReader: undefined
+            cardReader: undefined,
+            players: [],
         };
-    },
+    }
 
+    componentDidMount = () => {
+        node.socket.on('game.end', this.end);
+        node.socket.on('game.score', this.score);
+        node.socket.on('game.reset', this.reset);
+        node.socket.on('game.gamePoint', this.gamePoint);
 
-
-    componentDidMount: function() {
-
-        var _this = this;
-
-        node.socket.on('game.end', _this.end);
-        node.socket.on('game.score', _this.score);
-        node.socket.on('game.reset', _this.reset);
-        node.socket.on('game.gamePoint', _this.gamePoint);
-
-        node.socket.on('game.switchServer', function(data) {
-            _this.switchServer(data.player, data.nextServer);
+        node.socket.on('game.switchServer', (data) => {
+            this.switchServer(data.player, data.nextServer);
         });
 
-        node.socket.on('feelers.disconnect', _this.tableDisconnected);
-        node.socket.on('feelers.connect', _this.tableConnected);
-        node.socket.on('core.batteryLow', _this.tableBatteryLow);
+        node.socket.on('feelers.disconnect', this.tableDisconnected);
+        node.socket.on('feelers.connect', this.tableConnected);
+        node.socket.on('core.batteryLow', this.tableBatteryLow);
 
-        node.socket.on('cardReader.connect', _this.cardReaderConnected);
-        node.socket.on('cardReader.disconnect', _this.cardReaderDisconnected);
+        node.socket.on('cardReader.connect', this.cardReaderConnected);
+        node.socket.on('cardReader.disconnect', this.cardReaderDisconnected);
 
-        node.socket.on('player.join', function(data) {
+        node.socket.on('player.join', (data) => {
             console.log(['player.join', data.player.name]);
-            players[data.position] = new PlayerModel();
-			players[data.position].set(data.player);
+            this.addPlayerToState(data.player, data.position);
         });
 
-        node.socket.on('player.rematch', function() {
-			console.log('received rematch event');	
-            _this.rematch();
+        node.socket.on('player.rematch', () => {
+            console.log('received rematch event');
+            this.rematch();
         });
 
-    },
+    }
 
+    addPlayerToState = (player, position) => {
+        let newPlayers = this.state.players;
+        newPlayers[position] = new PlayerModel();
+        newPlayers[position].set(player);
 
-    rematch: function() {
-		//this.queueSound('proceed');
-    },
-    
+        this.setState({
+            players: newPlayers
+        });
+    }
 
-    switchServer: function(player, nextServer) {
+    rematch() {
+        //this.queueSound('proceed');
+    }
 
-        var
-            _this = this,
-            playerSound = '';
-
+    switchServer = (player, nextServer) => {
         this.setState({
             server: player
         });
-        
-		this.setState({
+
+        this.setState({
             nextServer: nextServer
         });
 
-        playerSound = players[player].name;
-
-		// cut down the delay between "player X to serve" and the score announcement by 500 ms
-		this.queueSound(slug(playerSound.toLowerCase()) + '-to-serve', -500);
-    },
+        // cut down the delay between "player X to serve" and the score announcement by 500 ms
+        this.queueSound(slug(this.state.players[player].name.toLowerCase()) + '-to-serve', -500);
+    }
 
 
-
-    score: function(data) {
-
-        var _this = this;
+    score = (data) => {
 
         this.setState({
             score: data.gameScore
         });
 
-	this.queueSound('scored');
+        this.queueSound('scored');
 
         // This is really counterintuitive, and far from a permanent
         // solution. This small delay allows us to cancel the score
         // announcement. For example, when a service change occurs,
         // we want to defer the score announcement to after the
         // service change announcement.
-        setTimeout(function() {
-            _this.announceScore();
+        setTimeout(() => {
+            this.announceScore();
         }, 500);
 
-    },
+    }
 
 
+    gamePoint = (data) => {
 
-    gamePoint: function(data) {
+        var player = data.player;
 
-        var
-            player = data.player,
-            playerSound,
-	    _this = this;
+        // delayed so it happens after the score announcements
+        setTimeout(() => {
+            // if winner is clear already don't say game point again
+            if (typeof this.state.winner === 'undefined') {
+                this.queueSound('game-point-' + slug(this.state.players[player].name.toLowerCase()));
+            }
+        }, 600);
+    }
 
-
-	// delayed so it happens after the score announcements
-	setTimeout(function() {
-		// if winner is clear already don't say game point again
-		if(typeof _this.state.winner === 'undefined') {
-        		playerSound = players[player].name;
-	        	_this.queueSound('game-point-' + slug(playerSound.toLowerCase()));
-		}
-	}, 600);
-    },
-
-
-
-    announceScore: function() {
+    announceScore() {
 
         var announcement = this.state.score;
-		var _this = this;
-        
-        if(typeof this.state.winner === 'undefined' && (announcement[0] > 0 || announcement[1] > 0) ) {
+
+        if (typeof this.state.winner === 'undefined' && (announcement[0] > 0 || announcement[1] > 0)) {
             // Announce the server's score first
-            if(this.state.server == 1) {
+            if (this.state.server == 1) {
                 announcement.reverse();
             }
 
-			// cut down the delay between the score announcements of the two sides
-			this.queueSound('' + announcement[0], -500);
-			this.queueSound('' + announcement[1]);
+            // cut down the delay between the score announcements of the two sides
+            this.queueSound('' + announcement[0], -500);
+            this.queueSound('' + announcement[1]);
         }
 
-    },
+    }
 
+    end = (data) => {
 
+        this.resetQueue();
 
-    end: function(data) {
-
-        var
-            _this = this,
-            playerSound = '';
-        
-	this.resetQueue();
-
-        this.setState({ winner: data.winner });
+        this.setState({winner: data.winner});
 
         this.queueSound('game_end');
 
-//	this.queueSound(data.winner % 2 == 0 ? 'blue-team-dominating' : 'red-team-dominating');
-	this.queueSound(slug(playerSound).toLowerCase() + '-won-the-game');
-    },
+        //this.queueSound(data.winner % 2 == 0 ? 'blue-team-dominating' : 'red-team-dominating');
+        this.queueSound(slug(data.players[data.winner].name).toLowerCase() + '-won-the-game');
+    }
 
-    resetQueue: function() {
-		soundQueue = [];
-	},
-	
-    queueSound: function(sound, offset, cb) {
+    resetQueue() {
+        soundQueue = [];
+    }
+
+    queueSound(sound, offset, cb) {
         soundQueue.push({
             name: sound,
             offsetNext: typeof offset === 'undefined' ? 0 : offset,
             cb: cb
         });
         this.playQueue();
-    },
+    }
 
-    playQueue: function() {
+    playQueue() {
 
         var
-            _this = this,
             play;
 
-        if(soundsPlaying) {
+        if (soundsPlaying) {
             return;
         }
 
         soundsPlaying = true;
 
-        play = function() {
+        play = function () {
 
             var
                 sound = {},
                 offset = 0;
 
-            if(soundQueue.length > 0) {
+            if (soundQueue.length > 0) {
                 sound = soundQueue.shift();
-				var audio = new Audio(soundPath + sound.name + ".wav");
-				audio.addEventListener('loadedmetadata', function() {
-	                var duration = audio.duration;
-	                offset = sound.offsetNext ? duration*1000 + sound.offsetNext : duration*1000;
-	                audio.play();
-					setTimeout(function() {
-	                    play();
-	                    if(sound.cb) {
-	                        sound.cb();
-	                    }
-	                }, offset);
-				});
-				audio.addEventListener('error', function() {
-					play();
-				});
+                var audio = new Audio(soundPath + sound.name + ".wav");
+                audio.addEventListener('loadedmetadata', function () {
+                    var duration = audio.duration;
+                    offset = sound.offsetNext ? duration * 1000 + sound.offsetNext : duration * 1000;
+                    audio.play();
+                    setTimeout(function () {
+                        play();
+                        if (sound.cb) {
+                            sound.cb();
+                        }
+                    }, offset);
+                });
+                audio.addEventListener('error', function () {
+                    play();
+                });
             } else {
                 soundsPlaying = false;
             }
@@ -246,74 +217,63 @@ var GameComponent = module.exports = React.createClass({
 
         play();
 
-    },
+    }
 
-    tableConnected: function() {
+    tableConnected = () => {
         this.setState({
             table: true
         });
-    },
+    }
 
 
-
-    tableDisconnected: function() {
+    tableDisconnected = () => {
         this.setState({
             table: false
         });
-    },
+    }
 
 
-
-    cardReaderConnected: function() {
+    cardReaderConnected = () => {
         this.setState({
             cardReader: true
         });
-    },
+    }
 
 
-
-    cardReaderDisconnected: function() {
+    cardReaderDisconnected = () => {
         this.setState({
             cardReader: false
         });
-    },
+    }
 
 
-
-    tableBatteryLow: function() {
+    tableBatteryLow = () => {
         this.setState({
             table: 'warning'
         });
-    },
-
-    reset: function() {
-
-        setTimeout(function() {
-            players = [];
-        }, 1500);
-
-        this.replaceState(this.getInitialState());
-
-    },
-
-
-
-    render: function() {
-        return (
-            <div>
-                <AdminComponent active='0' />
-                <div className='player_container'>
-                    <PlayerComponent positionId='0' players={players} server={this.state.server} winner={this.state.winner} nextServer={this.state.nextServer} />
-                    <PlayerComponent positionId='1' players={players} server={this.state.server} winner={this.state.winner} nextServer={this.state.nextServer} />
-                    <StatusComponent main='true' />
-                </div>
-                <StatsComponent players={players} server={this.state.server} score={this.state.score} />
-                <div className='status-indicators'>
-                    <StatusIndicatorComponent state={this.state.table} />
-                    <StatusIndicatorComponent state={this.state.cardReader} />
-                </div>
-            </div>
-        );
     }
 
-});
+    reset = () => {
+        this.setState(this.getInitialState());
+    }
+
+    render() {
+        return (
+            <div>
+                <div className='player_container'>
+                    <PlayerComponent positionId='0' players={this.state.players} server={this.state.server}
+                                     winner={this.state.winner} nextServer={this.state.nextServer} />
+                    <PlayerComponent positionId='1' players={this.state.players} server={this.state.server}
+                                     winner={this.state.winner} nextServer={this.state.nextServer} />
+                    <StatusComponent main='true' />
+                </div>
+                <StatsComponent players={this.state.players} server={this.state.server} score={this.state.score}/>
+                <div className='status-indicators'>
+                    <StatusIndicatorComponent state={this.state.table}/>
+                    <StatusIndicatorComponent state={this.state.cardReader}/>
+                </div>
+            </div>
+
+        );
+    }
+}

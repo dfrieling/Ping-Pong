@@ -1,39 +1,30 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
 
 
 var
     React = require('react'),
-    classSet = require('react/lib/cx'),
+    classSet = require('classnames'),
     config = window.config;
 
 
 
-var GameComponent = module.exports = React.createClass({
+export default class StatusIndicatorComponent extends React.Component {
 
+    state = this.getInitialState();
 
-
-    getInitialState: function() {
+    getInitialState() {
         return {};
-    },
+    }
 
+    componentDidMount() {
+    }
 
+    reset = () => {
+        this.setState(this.getInitialState());
+    }
 
-    componentDidMount: function() {
-    },
-    
-    
-    
-    reset: function() {
-        this.replaceState(this.getInitialState());
-    },
-    
-    
-    
-    render: function() {
+    render() {
         
         var classes = classSet({
             'status-indicator': true,
@@ -45,7 +36,5 @@ var GameComponent = module.exports = React.createClass({
         
         return <div className={classes}></div>;   
     }
-    
 
-    
-});
+}

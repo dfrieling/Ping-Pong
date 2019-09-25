@@ -1,6 +1,3 @@
-/**
- * @jsx React.DOM
- */
 'use strict';
 
 
@@ -12,61 +9,53 @@ var
 
 
 
-var LeaderboardComponent = module.exports = React.createClass({
+export default class LeaderboardComponent extends React.Component {
 
+    state = {
+        players: [],
+        active: true
+    }
 
-
-    getInitialState: function() {
-        return {
-            players: [],
-            active: true
-        };
-    },
-
-
-
-    componentDidMount: function() {
-        
-        var _this = this;
+    componentDidMount() {
         
         this.getLeaderboard();
-        
-        //node.socket.on('leaderboard.show', _this.show);
-        //node.socket.on('leaderboard.hide', _this.hide);
 
-    },
+        // todo: those lines used to be commented out
+        /*node.socket.on('leaderboard.show', this.show);
+        node.socket.on('leaderboard.hide', this.hide);*/
+    }
     
-    
-    
-    show: function() {
+    show = () => {
         this.getLeaderboard();
         this.setState({
             active: true
         });
-    },
+    }
     
     
     
-    hide: function() {
-        this.setState({
-            active: false
-        });
-    },
+    hide = () => {
+        // todo make more pretty
+        if (this.state.active === true) {
+            this.setState({
+                active: false
+            });
+        }
+    }
     
     
     
-    getLeaderboard: function() {
-        var _this = this;
-        $.get(config.clientUrl + '/leaderboard', function(players) {
-            _this.setState({
+    getLeaderboard = () => {
+        $.get(config.clientUrl + '/leaderboard', (players) => {
+            this.setState({
                 players: players
             });
         });
-    },
+    }
 
 
 
-    render: function() {
+    render() {
 
         var
             players,
@@ -77,6 +66,7 @@ var LeaderboardComponent = module.exports = React.createClass({
                 <li className='leaderboard__player' key={player.id}>
                     <div className='leaderboard__player__inner'>
                         <div className='leaderboard__player__name'>{i + 1}. {player.name}</div>
+                        <div className='leaderboard__player__rank'>{Number.parseFloat(player.trueSkill_mu).toFixed(2)}</div>
                     </div>
                 </li>
             );
@@ -90,12 +80,13 @@ var LeaderboardComponent = module.exports = React.createClass({
                     </ol>
                 </div>
             );
+        } else {
+            leaderboard = (
+                <div></div>
+            )
         }
 
         return leaderboard;
 
     }
-
-
-
-});
+}
