@@ -1,6 +1,9 @@
 
 from trueskill import Rating, rate, quality
 import sqlalchemy as sqla
+import logging
+import sys
+from tenacity import *
 
 #config
 host = 'db'
@@ -9,6 +12,11 @@ user = 'root'
 password = 'example'
 db = 'pingpong'
 
+
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+
 #exemplary calls:
 #submitMatchResult(team1 = "2,3", team2="1,4", winningTeam=1)
 #matchQuality(team1 = "2,3", team2="1,4")
@@ -16,11 +24,13 @@ db = 'pingpong'
 def getRating(playerId):
     r = exe_my_sql_query("SELECT trueSkill_mu,trueSkill_sigma FROM players WHERE id = '"+str(playerId)+"'").fetchone()
     rating = Rating(mu=r["trueSkill_mu"], sigma=r["trueSkill_sigma"])
+
     return(rating)
 
 def updateRating(playerId,rating):
     statement = "UPDATE players SET trueSkill_mu = '"+str(rating.mu)+"', trueSkill_sigma = '"+str(rating.sigma)+"' WHERE id = '"+str(playerId)+"'"
     exe_my_sql_query(statement)
+
     return
 
 def getTeamRatings(team):
@@ -28,12 +38,14 @@ def getTeamRatings(team):
     for player in team:
         r = getRating(player)
         team_ratings.append(r)
+
     return team_ratings
 
 def setTeamRatings(team, ratings):
     if(len(team)==len(ratings)):
         for i in range(0,len(team)):
             updateRating(playerId = team[i],rating = ratings[i])
+
     return
 
 #expecting a comma separated string of playerids for each team parameter, winningTeam := [1,2]
@@ -55,15 +67,18 @@ def submitMatchResult(team1,team2,winningTeam):
     #write back to db
     setTeamRatings(t1, t1_updated)
     setTeamRatings(t2, t2_updated)
+
     return
 
+@retry(stop=stop_after_attempt(10), wait=wait_exponential(multiplier=0.5, min=1, max=10), before=before_log(logger, logging.DEBUG))
 def exe_my_sql_query(query, host = host, db = db,port=port):
-    path = "mysql://"+user+':'+password+'@'+host+'/'+db+'?host='+host+'?port='+port
+    logger.debug("trying to execute '{query}' on {db}@{host}:{port}".format(query=query, db=db, port=port, host=host))
+    path = "mysql://{user}:{password}@{host}:{port}/{db}".format(user=user, password=password, host=host, port=port, db=db)
     engine = sqla.create_engine(path)
     connection = engine.connect()
     result = connection.execute(query)
     connection.close()
-    #return json.dumps([dict(r) for r in result])
+
     return result
 
 def matchQuality(team1,team2):
@@ -75,12 +90,12 @@ def matchQuality(team1,team2):
     t2_ratings = getTeamRatings(t2)
 
     q = quality([t1_ratings, t2_ratings])
+
     return round(q,4)
 
-#exemplary call:
-#submitMatchResult(team1 = "3", team2="1", winningTeam=1)
-#matchQuality(team1="1",team2="3")
-
+# exemplary call:
+# submitMatchResult(team1 = "3", team2="1", winningTeam=1)
+# matchQuality(team1="1",team2="3")
 # to make functions accessible from the commandline
 if __name__ == '__main__':
     import sys
