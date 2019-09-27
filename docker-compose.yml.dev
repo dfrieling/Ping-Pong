@@ -5,7 +5,7 @@ services:
     db:
         image: mysql
         command: --default-authentication-plugin=mysql_native_password
-        restart: always
+        restart: unless-stopped
         environment:
             MYSQL_ROOT_PASSWORD: example
         volumes:
@@ -15,7 +15,7 @@ services:
 
     adminer:
         image: adminer
-        restart: always
+        restart: unless-stopped
         ports:
             - "8081:8080"
 
@@ -23,7 +23,7 @@ services:
         build:
             dockerfile: Dockerfile-backend
             context: .
-        restart: always
+        restart: unless-stopped
         environment:
           NODE_ENV: ${NODE_ENV}
         volumes:
@@ -39,7 +39,7 @@ services:
 
     soundloader:
         image: node
-        restart: always
+        restart: unless-stopped
         environment:
             NODE_ENV: ${NODE_ENV}
         volumes:
@@ -74,9 +74,9 @@ services:
             # only mounting the minimum for fast performance on docker on windows
             - ./ui/:/usr/src/app/ui/
             - ./webpack.config.js:/usr/src/app/webpack.config.js
-        command: npm run build
         ports:
             - 9000:9000
+        command: npm run build
 
     radio:
         restart: unless-stopped
