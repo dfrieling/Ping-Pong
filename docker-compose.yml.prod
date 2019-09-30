@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+
+    backend:
+        build:
+            dockerfile: Dockerfile-backend
+            context: .
+        restart: unless-stopped
+        environment:
+            NODE_ENV: ${NODE_ENV}
+        volumes:
+            - .:/usr/src/app/
+        ports:
+            - "8080:8080"
+            - "2020:2020"
+            - "234:234"
+        command: node server.js
+
+    soundloader:
+        image: node:alpine
+        restart: unless-stopped
+        environment:
+            NODE_ENV: ${NODE_ENV}
+        volumes:
+            - .:/usr/src/app/
+        working_dir: /usr/src/app/
+        command: node watchPlayers.js
+
+    migrations:
+        build:
+            dockerfile: Dockerfile-migrations
+            context: .
+        environment:
+            NODE_ENV: ${NODE_ENV}
+        volumes:
+            - .:/usr/src/app/
+        command: bash -c "node create_database.js && knex migrate:latest --env ${NODE_ENV} migrate"
+
