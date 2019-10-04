@@ -71,7 +71,7 @@ def submitMatchResult(team1,team2,winningTeam):
     return
 
 @retry(stop=stop_after_attempt(10), wait=wait_exponential(multiplier=0.5, min=1, max=10), before=before_log(logger, logging.DEBUG))
-def exe_my_sql_query(query, host = host, db = db,port=port):
+def exe_my_sql_query(query, host = host, db = db, port = port):
     logger.debug("trying to execute '{query}' on {db}@{host}:{port}".format(query=query, db=db, port=port, host=host))
     path = "mysql://{user}:{password}@{host}:{port}/{db}".format(user=user, password=password, host=host, port=port, db=db)
     engine = sqla.create_engine(path)
