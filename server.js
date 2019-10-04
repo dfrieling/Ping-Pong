@@ -36,11 +36,6 @@ player = {};
 io = io.listen(config.wsPort);
 console.log(chalk.green('Websocket Server: Listening on port ' + config.wsPort));
 
-/* outdated socket.io usage
-io.configure(function() {
-    io.set('log level', 2);
-});*/
-
 app.get('/', function(req, res) {
     
     delete require.cache[path.resolve('./versions/js.json')];
