@@ -70,6 +70,7 @@ def submitMatchResult(team1,team2,winningTeam):
 
     return
 
+#retry this function if failing, max tries=10, starting from 1sec to 10sec sleep in between and do logging about it
 @retry(stop=stop_after_attempt(10), wait=wait_exponential(multiplier=0.5, min=1, max=10), before=before_log(logger, logging.DEBUG))
 def exe_my_sql_query(query, host = host, db = db, port = port):
     logger.debug("trying to execute '{query}' on {db}@{host}:{port}".format(query=query, db=db, port=port, host=host))
