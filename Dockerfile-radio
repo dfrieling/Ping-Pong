@@ -1,4 +1,4 @@
-FROM hypriot/wiringpi
+#FROM hypriot/wiringpi or hypriot/rpi-gpio but both without Dockerfile and probably ARM-only
 
 RUN apt-get update && \
   apt-get install -y git vim sudo

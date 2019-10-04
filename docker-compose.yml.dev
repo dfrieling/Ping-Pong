@@ -78,10 +78,11 @@ services:
             - 9000:9000
         command: npm run build
 
-    radio:
-        restart: unless-stopped
-        build:
-            dockerfile: Dockerfile-radio
-            context: .
-        environment:
-            WS_PORT: 234
+# Dockerfile not ready yet
+#    radio:
+#        restart: unless-stopped
+#        build:
+#            dockerfile: Dockerfile-radio
+#            context: .
+#        environment:
+#            WS_PORT: 234
