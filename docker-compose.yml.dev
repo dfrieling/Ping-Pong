@@ -59,7 +59,7 @@ services:
         volumes:
           - .:/usr/src/app/
           - ./config.js:/usr/src/app/config.js
-        command: bash -c "node create_database.js && knex migrate:latest --env ${NODE_ENV} migrate"
+        command: sh -c "node create_database.js && knex migrate:latest --env ${NODE_ENV} migrate"
         depends_on:
           - db
 
