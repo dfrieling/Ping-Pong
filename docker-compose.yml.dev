@@ -59,9 +59,9 @@ services:
         volumes:
           - .:/usr/src/app/
           - ./config.js:/usr/src/app/config.js
-        command: sh -c "node create_database.js && knex migrate:latest --env ${NODE_ENV} migrate"
         depends_on:
           - db
+        entrypoint: sh -c "node create_database.js && knex migrate:latest --env ${NODE_ENV} migrate"
 
     webpack:
         restart: unless-stopped
