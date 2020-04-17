@@ -285,7 +285,7 @@ gameController.prototype.end = function (complete) {
 	trueskill.submitMatch(players, winningPlayer);
 
 	players.forEach((player, i) => {
-        console.log('writing trueskill for player: ' + player.id + " winningPlayer=" + winningPlayer);
+        console.log('increasing play_count for player: ' + player.id);
 
 		// Increment play count
 		player.set('play_count', player.get('play_count') + 1);
